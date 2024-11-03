@@ -6,12 +6,12 @@ from datasets import load_dataset
 from rich import print
 from rich.table import Table
 from sagemaker.jumpstart.estimator import JumpStartEstimator
-from src.console import console
-from src.schemas.model import Model, ModelSource
-from src.schemas.training import Training
-from src.session import sagemaker_session
-from src.utils.aws_utils import is_s3_uri
-from src.utils.rich_utils import print_success, print_error
+from magemaker.console import console
+from magemaker.schemas.model import Model, ModelSource
+from magemaker.schemas.training import Training
+from magemaker.session import sagemaker_session
+from magemaker.utils.aws_utils import is_s3_uri
+from magemaker.utils.rich_utils import print_success, print_error
 from transformers import AutoTokenizer
 
 from dotenv import load_dotenv

@@ -1,0 +1,11 @@
+deployment: !Deployment
+  destination: aws
+  # Endpoint name matches model_id for querying atm.
+  endpoint_name: test-bert-uncased
+  instance_count: 1
+  instance_type: ml.m5.xlarge
+
+models:
+- !Model
+  id: google-bert/bert-base-uncased
+  source: huggingface

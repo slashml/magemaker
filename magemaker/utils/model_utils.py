@@ -2,12 +2,12 @@ import datetime
 from difflib import SequenceMatcher
 from dotenv import dotenv_values
 from huggingface_hub import HfApi
-from src.utils.rich_utils import print_error
-from src.sagemaker import SagemakerTask
-from src.schemas.deployment import Deployment
-from src.schemas.model import Model, ModelSource
-from src.schemas.query import Query
-from src.session import sagemaker_session
+from magemaker.utils.rich_utils import print_error
+from magemaker.sagemaker import SagemakerTask
+from magemaker.schemas.deployment import Deployment
+from magemaker.schemas.model import Model, ModelSource
+from magemaker.schemas.query import Query
+from magemaker.session import sagemaker_session
 from typing import Dict, Tuple, Optional
 HUGGING_FACE_HUB_TOKEN = dotenv_values(".env").get("HUGGING_FACE_HUB_KEY")
 

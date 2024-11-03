@@ -2,17 +2,17 @@ import inquirer
 import logging
 import threading
 from InquirerPy import prompt
-from src.sagemaker import EC2Instance
-from src.sagemaker.create_model import deploy_model
-from src.sagemaker.delete_model import delete_sagemaker_model
-from src.sagemaker.resources import list_sagemaker_endpoints, select_instance, list_service_quotas_async
-from src.sagemaker.query_endpoint import make_query_request
-from src.sagemaker.search_jumpstart_models import search_sagemaker_jumpstart_model
-from src.utils.rich_utils import print_error, print_success
-from src.schemas.deployment import Deployment, Destination
-from src.schemas.model import Model, ModelSource
-from src.schemas.query import Query
-from src.config import get_config_for_endpoint
+from magemaker.sagemaker import EC2Instance
+from magemaker.sagemaker.create_model import deploy_model
+from magemaker.sagemaker.delete_model import delete_sagemaker_model
+from magemaker.sagemaker.resources import list_sagemaker_endpoints, select_instance, list_service_quotas_async
+from magemaker.sagemaker.query_endpoint import make_query_request
+from magemaker.sagemaker.search_jumpstart_models import search_sagemaker_jumpstart_model
+from magemaker.utils.rich_utils import print_error, print_success
+from magemaker.schemas.deployment import Deployment, Destination
+from magemaker.schemas.model import Model, ModelSource
+from magemaker.schemas.query import Query
+from magemaker.config import get_config_for_endpoint
 from enum import StrEnum
 from rich import print
 
@@ -23,15 +23,18 @@ class Actions(StrEnum):
     DELETE = "Delete a model endpoint"
     QUERY = "Query a model endpoint"
     EXIT = "Quit"
-    # TRAIN = "fine tune a model"
+    TRAIN = "fine tune a model"
 
+import os
 
-def main(args, loglevel):
+# set AWS_REGION in env
+os.environ["AWS_REGION"] = "us-west-2"
+
+def main(args=None, loglevel='INFO'):
     logging.basicConfig(format="%(levelname)s: %(message)s", level=loglevel)
 
-    print("[magenta]Model Manager by OpenFoundry.")
-    print("[magenta]Star us on Github ☆! [blue]https://github.com/openfoundry-ai/model_manager")
-
+    print("[magenta]Magemaker by SlashML")
+    
     # list_service_quotas is a pretty slow API and it's paginated.
     # Use async here and store the result in instances
     instances = []
@@ -109,8 +112,12 @@ def main(args, loglevel):
                 config = get_config_for_endpoint(endpoint)
 
                 # support multi-model endpoints
-                config = (config.deployment, config.models[0])
-                make_query_request(endpoint, query, config)
+                if config:
+                    config = (config.deployment, config.models[0])
+                    make_query_request(endpoint, query, config)
+                
+                print('Config for this model not found, try another model')
+
             case Actions.EXIT:
                 quit()
 

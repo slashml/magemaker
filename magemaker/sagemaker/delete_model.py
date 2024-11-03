@@ -1,6 +1,6 @@
 import boto3
 from rich import print
-from src.utils.rich_utils import print_success
+from magemaker.utils.rich_utils import print_success
 from typing import List
 
 

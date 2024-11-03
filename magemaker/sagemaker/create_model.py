@@ -9,16 +9,16 @@ from sagemaker.jumpstart.estimator import JumpStartEstimator
 from sagemaker.model import Model
 from sagemaker.predictor import Predictor
 from sagemaker.s3 import S3Uploader
-from src.config import write_config
-from src.schemas.model import Model, ModelSource
-from src.schemas.deployment import Deployment
-from src.session import session, sagemaker_session
-from src.console import console
-from src.utils.aws_utils import construct_s3_uri, is_s3_uri
-from src.utils.rich_utils import print_error, print_success
-from src.utils.model_utils import get_unique_endpoint_name, get_model_and_task
-from src.huggingface import HuggingFaceTask
-from src.huggingface.hf_hub_api import get_hf_task
+from magemaker.config import write_config
+from magemaker.schemas.model import Model, ModelSource
+from magemaker.schemas.deployment import Deployment
+from magemaker.session import session, sagemaker_session
+from magemaker.console import console
+from magemaker.utils.aws_utils import construct_s3_uri, is_s3_uri
+from magemaker.utils.rich_utils import print_error, print_success
+from magemaker.utils.model_utils import get_unique_endpoint_name, get_model_and_task
+from magemaker.huggingface import HuggingFaceTask
+from magemaker.huggingface.hf_hub_api import get_hf_task
 
 HUGGING_FACE_HUB_TOKEN = dotenv_values(".env").get("HUGGING_FACE_HUB_KEY")
 SAGEMAKER_ROLE = dotenv_values(".env")["SAGEMAKER_ROLE"]

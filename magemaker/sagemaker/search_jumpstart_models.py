@@ -1,8 +1,8 @@
 import inquirer
 from enum import StrEnum, auto
 from sagemaker.jumpstart.notebook_utils import list_jumpstart_models
-from src.utils.rich_utils import print_error
-from src.session import session, sagemaker_session
+from magemaker.utils.rich_utils import print_error
+from magemaker.session import session, sagemaker_session
 
 
 class Frameworks(StrEnum):

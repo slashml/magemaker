@@ -2,11 +2,11 @@ import uvicorn
 import os
 from dotenv import dotenv_values
 from fastapi import FastAPI
-from src.config import get_config_for_endpoint, get_endpoints_for_model
-from src.sagemaker.resources import get_sagemaker_endpoint
-from src.sagemaker.query_endpoint import make_query_request
-from src.schemas.query import Query, ChatCompletion
-from src.session import session
+from magemaker.config import get_config_for_endpoint, get_endpoints_for_model
+from magemaker.sagemaker.resources import get_sagemaker_endpoint
+from magemaker.sagemaker.query_endpoint import make_query_request
+from magemaker.schemas.query import Query, ChatCompletion
+from magemaker.session import session
 from litellm import completion
 
 os.environ["AWS_REGION_NAME"] = session.region_name
