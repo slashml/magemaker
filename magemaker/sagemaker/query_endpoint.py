@@ -3,16 +3,16 @@ import json
 import inquirer
 from InquirerPy import prompt
 from sagemaker.huggingface.model import HuggingFacePredictor
-from src.config import ModelDeployment
-from src.console import console
-from src.sagemaker import SagemakerTask
-from src.huggingface import HuggingFaceTask
-from src.utils.model_utils import get_model_and_task, is_sagemaker_model, get_text_generation_hyperpameters
-from src.utils.rich_utils import print_error
-from src.schemas.deployment import Deployment
-from src.schemas.model import Model
-from src.schemas.query import Query
-from src.session import sagemaker_session
+from magemaker.config import ModelDeployment
+from magemaker.console import console
+from magemaker.sagemaker import SagemakerTask
+from magemaker.huggingface import HuggingFaceTask
+from magemaker.utils.model_utils import get_model_and_task, is_sagemaker_model, get_text_generation_hyperpameters
+from magemaker.utils.rich_utils import print_error
+from magemaker.schemas.deployment import Deployment
+from magemaker.schemas.model import Model
+from magemaker.schemas.query import Query
+from magemaker.session import sagemaker_session
 from typing import Dict, Tuple, Optional
 
 

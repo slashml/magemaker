@@ -1,9 +1,9 @@
 [project]
-name = "model_manager"
-version = "0.1.0"
+name = "magemaker"
+version = "0.1.1"
 description = "Default template for PDM package"
 authors = [
-    {name = "Arthur Chi", email = "arthur@openfoundry.ai"},
+    {name = "eff-kay", email = "faizank@slashml.com"},
 ]
 dependencies = [
     "pyyaml>=6.0.1",
@@ -22,9 +22,14 @@ dependencies = [
     "fastapi>=0.111.0",
     "litellm>=1.37.5",
 ]
-requires-python = ">=3.12"
+requires-python = ">=3.11"
 readme = "README.md"
 license = {text = "MIT"}
+
+
+[project.scripts]
+magemaker = "magemaker.runner:runner"
+
 
 [build-system]
 requires = ["pdm-backend"]
@@ -32,6 +37,11 @@ build-backend = "pdm.backend"
 
 [tool.pdm]
 distribution = true
+package-dir = "magemaker"
+
+[tool.pdm.build]
+includes = ["magemaker", "magemaker/scripts/preflight.sh", "magemaker/scripts/setup_role.sh"]  # Include setup.sh in the package distribution
+
 
 [tool.pdm.dev-dependencies]
 test = [

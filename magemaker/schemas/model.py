@@ -1,9 +1,9 @@
 import yaml
-from src.yaml import loader, dumper
+from magemaker.yaml import loader, dumper
 from typing import Optional, Union, Dict
 from enum import StrEnum
-from src.huggingface import HuggingFaceTask
-from src.sagemaker import SagemakerTask
+from magemaker.huggingface import HuggingFaceTask
+from magemaker.sagemaker import SagemakerTask
 from pydantic import BaseModel
 
 

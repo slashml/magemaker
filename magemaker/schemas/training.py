@@ -1,8 +1,8 @@
 import yaml
 from pydantic import BaseModel
 from typing import Optional
-from src.schemas.deployment import Destination
-from src.yaml import loader, dumper
+from magemaker.schemas.deployment import Destination
+from magemaker.yaml import loader, dumper
 
 
 class Hyperparameters(BaseModel):

@@ -1,5 +1,5 @@
 import yaml
-from src.yaml import loader, dumper
+from magemaker.yaml import loader, dumper
 from typing import Optional
 from enum import StrEnum
 from pydantic import BaseModel

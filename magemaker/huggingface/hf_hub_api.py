@@ -1,8 +1,8 @@
 from dotenv import dotenv_values
-from src.console import console
-from src.huggingface import hf_api
-from src.schemas.model import Model
-from src.utils.rich_utils import print_error
+from magemaker.console import console
+from magemaker.huggingface import hf_api
+from magemaker.schemas.model import Model
+from magemaker.utils.rich_utils import print_error
 
 HUGGING_FACE_HUB_TOKEN = dotenv_values(".env").get("HUGGING_FACE_HUB_KEY")
 
