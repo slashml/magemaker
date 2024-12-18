@@ -15,7 +15,7 @@ from magemaker.schemas.query import Query
 from magemaker.config import get_config_for_endpoint
 from enum import StrEnum
 from rich import print
-
+from magemaker.azure.azure_model_deploy import deploy_to_azure_ml
 
 class Actions(StrEnum):
     LIST = "Show active model endpoints"
@@ -128,6 +128,7 @@ class ModelType(StrEnum):
     SAGEMAKER = "Deploy a Sagemaker model"
     HUGGINGFACE = "Deploy a Hugging Face model"
     CUSTOM = "Deploy a custom model"
+    AZURE = "Deploy to Azure ML" 
 
 
 def build_and_deploy_model(instances, instance_thread):
@@ -182,6 +183,16 @@ def build_and_deploy_model(instances, instance_thread):
             )
 
             predictor = deploy_model(deployment=deployment, model=model)
+        case ModelType.AZURE:  
+            model_id = model_id()
+            model = Model(id=model_id, source=ModelSource.AZURE)
+            deployment = Deployment(
+                instance_type="Standard_DS3_v2",  
+                destination=Destination.AZURE,
+                num_gpus=0  
+            )
+            deploy_to_azure_ml(deployment=deployment, model=model)
+        
         case ModelType.HUGGINGFACE:
             questions = [
                 inquirer.Text(
@@ -240,3 +251,4 @@ def build_and_deploy_model(instances, instance_thread):
                 destination=Destination.AWS
             )
             deploy_model(deployment=deployment, model=model)
+

@@ -19,6 +19,10 @@ from magemaker.utils.rich_utils import print_error, print_success
 from magemaker.utils.model_utils import get_unique_endpoint_name, get_model_and_task
 from magemaker.huggingface import HuggingFaceTask
 from magemaker.huggingface.hf_hub_api import get_hf_task
+from azureml.core import Workspace, Environment, Model
+from azureml.core.webservice import AciWebservice, Webservice
+from azureml.core.compute import AmlCompute
+from azureml.core.model import InferenceConfig
 
 HUGGING_FACE_HUB_TOKEN = dotenv_values(".env").get("HUGGING_FACE_HUB_KEY")
 SAGEMAKER_ROLE = dotenv_values(".env")["SAGEMAKER_ROLE"]
@@ -218,3 +222,26 @@ def create_and_deploy_jumpstart_model(deployment: Deployment, model: Model):
         f"{model.id} is now up and running at the endpoint [blue]{predictor.endpoint_name}")
 
     return predictor
+
+def deploy_to_azure_ml(deployment: Deployment, model: Model):
+    # Connect to Azure Workspace
+    ws = Workspace.from_config()  # Ensure you have a config.json file for Azure ML credentials
+    compute_target = AmlCompute(ws, name=deployment.compute_target)
+    
+    # Prepare the environment (assuming you are using a Docker image for custom models)
+    env = Environment.from_conda_specification(name="myenv", file_path="environment.yml")
+    
+    # Create inference config
+    inference_config = InferenceConfig(entry_script="score.py", environment=env)
+
+    # Create model
+    model = Model.register(workspace=ws, model_path=model.location, model_name=model.id)
+
+    # Deploy model to Azure
+    deployment_config = AciWebservice.deploy_configuration(cpu_cores=1, memory_gb=1)
+    
+    service = Model.deploy(ws, deployment.endpoint_name, [model], inference_config, deployment_config, compute_target=compute_target)
+
+    service.wait_for_deployment(show_output=True)
+    print(f"Model deployed to Azure at endpoint: {service.scoring_uri}")
+    return service
