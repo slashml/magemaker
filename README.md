@@ -156,6 +156,33 @@ models:
     max_new_tokens: 250
 ```
 
+#### Fine-tuning a model using a yaml file
+
+You can also fine-tune a model using a yaml file, by using the `train` option in the command and passing path to the yaml file
+
+`
+magemaker --train .magemaker_config/train-bert.yaml
+`
+
+Here is an example yaml file for fine-tuning a hugging-face model:
+
+```yaml
+training: !Training
+  destination: aws
+  instance_type: ml.p3.2xlarge
+  instance_count: 1
+  training_input_path: s3://jumpstart-cache-prod-us-east-1/training-datasets/tc/data.csv
+  hyperparameters: !Hyperparameters
+    epochs: 1
+    per_device_train_batch_size: 32
+    learning_rate: 0.01
+
+models:
+- !Model
+  id: meta-textgeneration-llama-3-8b-instruct
+  source: huggingface
+```
+
 
 <br>
 <br>

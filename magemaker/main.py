@@ -57,6 +57,7 @@ def main(args=None, loglevel='INFO'):
 
         action = answers['action']
 
+        print('somehting')
         match action:
             case Actions.LIST:
                 if len(active_endpoints) != 0:

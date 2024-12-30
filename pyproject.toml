@@ -1,7 +1,7 @@
 [project]
 name = "magemaker"
-version = "0.1.1"
-description = "Default template for PDM package"
+version = "0.1.3"
+description = "A CLI tool to fine-tuning and deploying open-source models"
 authors = [
     {name = "eff-kay", email = "faizank@slashml.com"},
 ]
