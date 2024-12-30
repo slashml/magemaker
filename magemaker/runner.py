@@ -12,8 +12,8 @@ from magemaker.schemas.model import Model
 
 
 def runner():
-    if (not os.path.exists(os.path.expanduser('~/.aws')) or not os.path.exists('.env')):
-        os.system("bash setup.sh")
+    # if (not os.path.exists(os.path.expanduser('~/.aws')) or not os.path.exists('.env')):
+    #     os.system("bash setup.sh")
 
     parser = argparse.ArgumentParser(
         description="Create, deploy, query against models.",

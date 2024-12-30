@@ -34,7 +34,6 @@ def deploy_model(deployment: Deployment, model: Model):
         case ModelSource.Custom:
             deploy_custom_huggingface_model(deployment, model)
 
-
 def deploy_huggingface_model(deployment: Deployment, model: Model):
     region_name = session.region_name
     task = get_hf_task(model)

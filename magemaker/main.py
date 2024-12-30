@@ -8,6 +8,10 @@ from magemaker.sagemaker.delete_model import delete_sagemaker_model
 from magemaker.sagemaker.resources import list_sagemaker_endpoints, select_instance, list_service_quotas_async
 from magemaker.sagemaker.query_endpoint import make_query_request
 from magemaker.sagemaker.search_jumpstart_models import search_sagemaker_jumpstart_model
+
+from magemaker.gcp.resources import list_vertex_ai_endpoints
+from magemaker.gcp.delete_model import delete_vertex_ai_model
+
 from magemaker.utils.rich_utils import print_error, print_success
 from magemaker.schemas.deployment import Deployment, Destination
 from magemaker.schemas.model import Model, ModelSource
@@ -23,12 +27,48 @@ class Actions(StrEnum):
     DELETE = "Delete a model endpoint"
     QUERY = "Query a model endpoint"
     EXIT = "Quit"
-    TRAIN = "fine tune a model"
+    # TRAIN = "fine tune a model"
 
 import os
 
 # set AWS_REGION in env
 os.environ["AWS_REGION"] = "us-west-2"
+
+
+def fetch_active_endpoints():
+    sagemaker_endpoints = list_sagemaker_endpoints()
+    vertex_ai_endpoints = list_vertex_ai_endpoints()
+
+    return sagemaker_endpoints + vertex_ai_endpoints
+
+
+
+def print_active_endpoints(active_endpoints):
+    for endpoint in active_endpoints:
+        endpoint_id = endpoint.get('resource_name','').split('/')[-1]
+        endpoint_str = f'with id [green]{endpoint_id}[/green]' if endpoint_id else ''
+        if endpoint.get("InstanceType"):
+            print(f"[blue]{endpoint['EndpointName']}[/blue] running on an [green]{endpoint['InstanceType']} [/green] instance {endpoint_str}")
+        else:
+            print(f"[blue]{endpoint['EndpointName']}[/blue] running on an [red]Unknown[/red] instance")
+
+
+def delete_endpoint(endpoint_name):
+    print('Deleting endpoint...', endpoint_name)
+    import pdb
+    pdb.set_trace()
+
+    for endpoint in endpoint_name:
+        name, provider, resource_name = endpoint
+
+        if provider == 'Sagemaker':
+            delete_sagemaker_model([name])
+
+        if provider == 'VertexAI':
+            endpoint_id = resource_name.split('/')[-1] 
+            delete_vertex_ai_model(endpoint_id)
+
+
 
 def main(args=None, loglevel='INFO'):
     logging.basicConfig(format="%(levelname)s: %(message)s", level=loglevel)
@@ -43,7 +83,7 @@ def main(args=None, loglevel='INFO'):
     instance_thread.start()
 
     while True:
-        active_endpoints = list_sagemaker_endpoints()
+        active_endpoints = fetch_active_endpoints()
         questions = [
             inquirer.List(
                 'action',
@@ -57,12 +97,19 @@ def main(args=None, loglevel='INFO'):
 
         action = answers['action']
 
-        print('somehting')
         match action:
             case Actions.LIST:
                 if len(active_endpoints) != 0:
-                    [print(f"[blue]{endpoint['EndpointName']}[/blue] running on an [green]{endpoint['InstanceType']}[/green] instance")
-                     for endpoint in active_endpoints]
+                    sagemaker_endpoints = list_sagemaker_endpoints()
+                    vertex_ai_endpoints = list_vertex_ai_endpoints()
+                    # printing sagemaker endpoints
+                    print("[green]Sagemaker[/green] Endpoints:")
+                    print_active_endpoints(sagemaker_endpoints) 
+                    print('\n')
+
+                    print('[green]GCP[/green] Endpoints')
+                    print_active_endpoints(vertex_ai_endpoints) 
+                    print('\n')
                     print('\n')
                 else:
                     print_error('No active endpoints.\n')
@@ -76,7 +123,7 @@ def main(args=None, loglevel='INFO'):
                 questions = [
                     inquirer.Checkbox('endpoints',
                                       message="Which endpoints would you like to delete? (space to select)",
-                                      choices=[endpoint['EndpointName']
+                                      choices=[(endpoint['EndpointName']+'-'+endpoint.get('resource_name', '').split('/')[-1], (endpoint['EndpointName'], endpoint['__Provider'], endpoint.get('resource_name', '')))
                                                for endpoint in active_endpoints]
                                       )
                 ]
@@ -85,7 +132,7 @@ def main(args=None, loglevel='INFO'):
                     continue
 
                 endpoints_to_delete = answers['endpoints']
-                delete_sagemaker_model(endpoints_to_delete)
+                delete_endpoint(endpoints_to_delete)
             case Actions.QUERY:
                 if (len(active_endpoints) == 0):
                     print_success("No Endpoints to query!")

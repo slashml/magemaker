@@ -26,7 +26,9 @@ def pre_flight():
     except FileNotFoundError:
         print("Could not find setup.sh in the installed package")
         return 1
-    
+
+    import dotenv
+    dotenv.load_dotenv('.env')
     # Rest of your main function code
     return 0
 
