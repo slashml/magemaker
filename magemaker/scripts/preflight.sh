@@ -15,36 +15,35 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 echo "you need to create an aws user with access to Sagemaker"
 echo "if you don't know how to do that follow this doc https://docs.google.com/document/d/1NvA6uZmppsYzaOdkcgNTRl7Nb4LbpP9Koc4H_t5xNSg/edit?usp=sharing"
 
-# if ! command -v aws &> /dev/null
-# then
-#     OS="$(uname -s)"
-#     case "${OS}" in
-#         Linux*)     
-#             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-#             unzip awscliv2.zip
-#             sudo ./aws/install
-#             ;;
-#         Darwin*)    
-#             curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
-#             sudo installer -pkg AWSCLIV2.pkg -target /
-#             ;;
-#         *)          
-#             echo "Unsupported OS: ${OS}. See https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html"
-#             exit 1
-#             ;;
-#     esac
-# fi
+if ! command -v aws &> /dev/null
+then
+    OS="$(uname -s)"
+    case "${OS}" in
+        Linux*)     
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+            ;;
+        Darwin*)    
+            curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
+            sudo installer -pkg AWSCLIV2.pkg -target /
+            ;;
+        *)          
+            echo "Unsupported OS: ${OS}. See https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html"
+            exit 1
+            ;;
+    esac
+fi
 
-# aws configure set region us-east-1 && aws configure
-# touch .env
+aws configure set region us-east-1 && aws configure
+touch .env
 
 
-# if ! grep -q "SAGEMAKER_ROLE" .env
-# then
-#     # bash ./setup_role.sh
-#     bash "$SCRIPT_DIR/setup_role.sh"
-# fi
-
+if ! grep -q "SAGEMAKER_ROLE" .env
+then
+    # bash ./setup_role.sh
+    bash "$SCRIPT_DIR/setup_role.sh"
+fi
 
 
 # GCP
@@ -113,9 +112,6 @@ then
         echo -e "${YELLOW}No compute region currently set${NC}"
     fi
 fi
-
-
-
 
 
 
@@ -222,6 +218,54 @@ if ! grep -q "AZURE_WORKSPACE_NAME" .env; then
         exit 1
     fi
 fi
+
+# Function to check and register Azure resource providers
+check_and_register_providers() {
+    local providers=(
+        "Microsoft.MachineLearningServices"
+        "Microsoft.ContainerRegistry"
+        "Microsoft.KeyVault"
+        "Microsoft.Storage"
+        "Microsoft.Insights"
+        "Microsoft.ContainerService"
+        "Microsoft.PolicyInsights"
+        "Microsoft.Cdn"
+    )
+
+    echo "Checking Azure resource providers..."
+    for provider in "${providers[@]}"; do
+        echo "Checking registration status for: $provider"
+        
+        # Get the registration state
+        state=$(az provider show --namespace $provider --query registrationState -o tsv 2>/dev/null)
+        
+        if [ "$state" != "Registered" ]; then
+            echo "$provider is not registered. Registering now..."
+            az provider register --namespace $provider
+            
+            # Wait for registration to complete
+            echo "Waiting for $provider registration to complete..."
+            while true; do
+                state=$(az provider show --namespace $provider --query registrationState -o tsv)
+                if [ "$state" == "Registered" ]; then
+                    echo "$provider registration completed"
+                    break
+                fi
+                echo "Registration in progress... waiting 10 seconds"
+                sleep 10
+            done
+        else
+            echo "$provider is already registered"
+        fi
+    done
+    
+    echo "All required resource providers are registered"
+}
+
+# Add this line after the Azure login check
+echo "Checking and registering required Azure resource providers..."
+check_and_register_providers
+
 
 # Verify all required Azure environment variables are set
 echo "Verifying Azure environment variables..."
