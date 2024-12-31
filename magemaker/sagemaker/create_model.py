@@ -24,17 +24,8 @@ HUGGING_FACE_HUB_TOKEN = dotenv_values(".env").get("HUGGING_FACE_HUB_KEY")
 SAGEMAKER_ROLE = dotenv_values(".env")["SAGEMAKER_ROLE"]
 
 
-# TODO: Consolidate
-def deploy_model(deployment: Deployment, model: Model):
-    match model.source:
-        case ModelSource.HuggingFace:
-            deploy_huggingface_model(deployment, model)
-        case ModelSource.Sagemaker:
-            create_and_deploy_jumpstart_model(deployment, model)
-        case ModelSource.Custom:
-            deploy_custom_huggingface_model(deployment, model)
+def deploy_huggingface_model_to_sagemaker(deployment, model):
 
-def deploy_huggingface_model(deployment: Deployment, model: Model):
     region_name = session.region_name
     task = get_hf_task(model)
     model.task = task
@@ -105,6 +96,10 @@ def deploy_huggingface_model(deployment: Deployment, model: Model):
 
     write_config(deployment, model)
     return predictor
+
+def deploy_huggingface_model_to_vertexai(deployment, model):
+    pass
+
 
 
 def deploy_custom_huggingface_model(deployment: Deployment, model: Model):

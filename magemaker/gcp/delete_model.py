@@ -7,8 +7,6 @@ from dotenv import dotenv_values
 def delete_vertex_ai_model(
     endpoint_id: str,
 ):
-    import pdb
-    pdb.set_trace()
     project_id = dotenv_values('.env').get('PROJECT_ID')
     location = dotenv_values('.env').get('GCLOUD_REGION')
     # Initialize Vertex AI
