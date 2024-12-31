@@ -8,6 +8,9 @@ from magemaker.schemas.deployment import Deployment
 from dotenv import dotenv_values
 from magemaker.utils.model_utils import get_unique_endpoint_name
 
+
+from magemaker.config import write_config
+
 HUGGING_FACE_HUB_TOKEN = dotenv_values(".env").get("HUGGING_FACE_HUB_KEY")
 
 def deploy_huggingface_model_to_vertexai(deployment:Deployment, model: Model):

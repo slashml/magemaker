@@ -42,11 +42,14 @@ os.environ["AWS_REGION"] = "us-west-2"
 def deploy_huggingface_model(deployment: Deployment, model: Model):
     destination = deployment.destination
 
-    if destination == "sagemaker":
+    if destination == "aws":
         return deploy_huggingface_model_to_sagemaker(deployment, model)
 
-    elif destination == "vertexai":
+    elif destination == "gcp":
         return deploy_huggingface_model_to_vertexai(deployment, model)
+    
+    else:
+        raise ValueError("Invalid destination")
 
 
 def deploy_model(deployment: Deployment, model: Model):

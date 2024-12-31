@@ -10,6 +10,7 @@ from magemaker.sagemaker.fine_tune_model import fine_tune_model
 from magemaker.schemas.deployment import Deployment
 from magemaker.schemas.model import Model, ModelSource
 
+from magemaker.main import main, deploy_model
 
 def runner():
     # if (not os.path.exists(os.path.expanduser('~/.aws')) or not os.path.exists('.env')):
@@ -89,7 +90,6 @@ def runner():
 
         quit()
 
-    from magemaker.main import main
     main(args, loglevel)
 
 if __name__ == '__main__':
