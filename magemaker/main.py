@@ -13,6 +13,11 @@ from magemaker.gcp.resources import list_vertex_ai_endpoints
 from magemaker.gcp.delete_model import delete_vertex_ai_model
 from magemaker.gcp.query_endpoint import query_vertexai_endpoint_rest
 
+from magemaker.azure.resources import list_azure_endpoints
+from magemaker.azure.delete_model import delete_azure_model
+from magemaker.azure.query_endpoint import query_azure_endpoint
+from magemaker.azure.create_model import deploy_huggingface_model_to_azure
+
 from magemaker.utils.rich_utils import print_error, print_success
 from magemaker.schemas.deployment import Deployment, Destination
 from magemaker.schemas.model import Model, ModelSource
@@ -48,6 +53,9 @@ def deploy_huggingface_model(deployment: Deployment, model: Model):
     elif destination == "gcp":
         return deploy_huggingface_model_to_vertexai(deployment, model)
     
+    elif destination == "azure":
+        return deploy_huggingface_model_to_azure(deployment, model)
+    
     else:
         raise ValueError("Invalid destination")
 
@@ -65,8 +73,9 @@ def deploy_model(deployment: Deployment, model: Model):
 def fetch_active_endpoints():
     sagemaker_endpoints = list_sagemaker_endpoints()
     vertex_ai_endpoints = list_vertex_ai_endpoints()
+    azure_endpoints = list_azure_endpoints()
 
-    return sagemaker_endpoints + vertex_ai_endpoints
+    return sagemaker_endpoints, vertex_ai_endpoints, azure_endpoints
 
 
 
@@ -92,6 +101,10 @@ def delete_endpoint(endpoint_name):
         if provider == 'VertexAI':
             endpoint_id = resource_name.split('/')[-1] 
             delete_vertex_ai_model(endpoint_id)
+        
+        if provider == 'AzureML':
+            print('Deleting AzureML endpoint')
+            delete_azure_model(name)
 
 
 
@@ -111,6 +124,10 @@ def query_endpoint(endpoint, query):
     if provider == 'VertexAI':
         endpoint_id = resource_name.split('/')[-1] 
         query_vertexai_endpoint_rest(endpoint_id, query.query)
+    
+    if provider == 'AzureML':
+        print('Querying AzureML endpoint')
+        query_azure_endpoint(name, query.query)
 
 
     
@@ -144,23 +161,31 @@ def main(args=None, loglevel='INFO'):
 
         match action:
             case Actions.LIST:
-                if len(active_endpoints) != 0:
-                    sagemaker_endpoints = list_sagemaker_endpoints()
-                    vertex_ai_endpoints = list_vertex_ai_endpoints()
+                sagemaker_endpoints, vertex_ai_endpoints, azure_endpoints = active_endpoints
+
+                if len(sagemaker_endpoints) != 0 or len(vertex_ai_endpoints) != 0 or len(azure_endpoints) != 0:
                     # printing sagemaker endpoints
-                    print("[green]Sagemaker[/green] Endpoints:")
+                    print("[red]Sagemaker[/red] Endpoints:")
                     print_active_endpoints(sagemaker_endpoints) 
                     print('\n')
 
                     print('[green]GCP[/green] Endpoints')
                     print_active_endpoints(vertex_ai_endpoints) 
                     print('\n')
+
+                    print('[blue]Azure[/blue] Endpoints')
+                    print_active_endpoints(azure_endpoints) 
                     print('\n')
+
+                    print('\n')
+
                 else:
                     print_error('No active endpoints.\n')
             case Actions.DEPLOY:
                 build_and_deploy_model(instances, instance_thread)
             case Actions.DELETE:
+                active_endpoints = active_endpoints[0] + active_endpoints[1] + active_endpoints[2]
+
                 if (len(active_endpoints) == 0):
                     print_success("No Endpoints to delete!")
                     continue
@@ -179,6 +204,8 @@ def main(args=None, loglevel='INFO'):
                 endpoints_to_delete = answers['endpoints']
                 delete_endpoint(endpoints_to_delete)
             case Actions.QUERY:
+                active_endpoints = active_endpoints[0] + active_endpoints[1] + active_endpoints[2]
+
                 if (len(active_endpoints) == 0):
                     print_success("No Endpoints to query!")
                     continue

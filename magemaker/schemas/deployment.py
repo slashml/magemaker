@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 class Destination(StrEnum):
     AWS = "aws"
-    # AZURE = "azure"
+    AZURE = "azure"
     GCP = "gcp"
 
 

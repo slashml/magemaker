@@ -1,0 +1,13 @@
+deployment: !Deployment
+  destination: azure
+  endpoint_name: facebook--opt-125m-202410251736
+  instance_count: 1
+  instance_type: Standard_DS3_v2
+models:
+- !Model
+  id: facebook-opt-125m
+  location: null
+  predict: null
+  source: huggingface
+  task: text-generation
+  version: null
