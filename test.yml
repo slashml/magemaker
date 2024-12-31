@@ -1,0 +1,17 @@
+deployment: !Deployment
+  destination: gcp
+  endpoint_name: test-endpoint-12
+  accelerator_count: 1
+  instance_type: g2-standard-12
+  accelerator_type: NVIDIA_L4
+  num_gpus: null
+  quantization: null
+
+models:
+- !Model
+  id: facebook/opt-125m
+  location: null
+  predict: null
+  source: huggingface
+  task: null
+  version: null

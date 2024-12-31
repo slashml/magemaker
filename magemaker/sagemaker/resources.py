@@ -18,8 +18,11 @@ def list_sagemaker_endpoints(filter_str: str = None) -> List[str]:
 
     for endpoint in endpoints:
         endpoint_config = sagemaker_client.describe_endpoint_config(
-            EndpointConfigName=endpoint['EndpointName'])['ProductionVariants'][0]
+            EndpointConfigName = endpoint['EndpointName'])['ProductionVariants'][0]
+
         endpoint['InstanceType'] = endpoint_config['InstanceType']
+        endpoint['__Provider'] = 'Sagemaker'
+
     return endpoints
 
 

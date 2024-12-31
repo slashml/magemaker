@@ -5,15 +5,16 @@ import yaml
 logging.getLogger("sagemaker.config").setLevel(logging.WARNING)
 logging.getLogger("botocore.credentials").setLevel(logging.WARNING)
 import os
-from magemaker.sagemaker.create_model import deploy_huggingface_model, deploy_model
+from magemaker.sagemaker.create_model import deploy_huggingface_model_to_sagemaker, deploy_custom_huggingface_model
 from magemaker.sagemaker.fine_tune_model import fine_tune_model
 from magemaker.schemas.deployment import Deployment
-from magemaker.schemas.model import Model
+from magemaker.schemas.model import Model, ModelSource
 
+from magemaker.main import main, deploy_model
 
 def runner():
-    if (not os.path.exists(os.path.expanduser('~/.aws')) or not os.path.exists('.env')):
-        os.system("bash setup.sh")
+    # if (not os.path.exists(os.path.expanduser('~/.aws')) or not os.path.exists('.env')):
+    #     os.system("bash setup.sh")
 
     parser = argparse.ArgumentParser(
         description="Create, deploy, query against models.",
@@ -89,7 +90,6 @@ def runner():
 
         quit()
 
-    from magemaker.main import main
     main(args, loglevel)
 
 if __name__ == '__main__':

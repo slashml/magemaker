@@ -8,14 +8,18 @@ from pydantic import BaseModel
 class Destination(StrEnum):
     AWS = "aws"
     # AZURE = "azure"
-    # GCP = "gcp"
+    GCP = "gcp"
 
 
 class Deployment(BaseModel):
     destination: Destination
     instance_type: str
+    accelerator_type:Optional[str]=None
+    accelerator_count:int=0
     endpoint_name: Optional[str] = None
     instance_count: Optional[int] = 1
+    min_replica_count: Optional[int] = None
+    max_replica_count: Optional[int] = None
     num_gpus: Optional[int] = None
     quantization: Optional[str] = None
 
