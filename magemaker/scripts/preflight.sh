@@ -9,9 +9,23 @@ NC='\033[0m' # No Color
 # Get the directory where the script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+# Logging functions
+log_info() {
+    echo "[INFO] $1"
+}
 
+log_debug() {
+    echo "[DEBUG] $1"
+}
 
-# AWS
+log_error() {
+    echo "[ERROR] $1" >&2
+}
+
+# Configuration functions
+configure_aws() {
+echo "Running AWS Configuration..."
+echo "Running AWS..."
 echo "you need to create an aws user with access to Sagemaker"
 echo "if you don't know how to do that follow this doc https://docs.google.com/document/d/1NvA6uZmppsYzaOdkcgNTRl7Nb4LbpP9Koc4H_t5xNSg/edit?usp=sharing"
 
@@ -44,9 +58,14 @@ then
     # bash ./setup_role.sh
     bash "$SCRIPT_DIR/setup_role.sh"
 fi
+}
 
 
 # GCP
+
+configure_gcp() {
+    echo "Running GCP Configuration..."
+    echo "Running GCP..."
 echo "you need to create a GCP service account with access to GCS and vertex ai"
 echo "if you don't know how to do that follow this doc https://docs.google.com/document/d/1NvA6uZmppsYzaOdkcgNTRl7Nb4LbpP9Koc4H_t5xNSg/edit?usp=sharing"
 
@@ -88,6 +107,14 @@ if [ -z "$ACCOUNTS" ]; then
     exit 0
 fi
 
+echo "Setting up application default credentials..."
+gcloud auth application-default login --no-launch-browser
+
+if [ $? -ne 0 ]; then
+    echo -e "${RED}Failed to set application default credentials${NC}"
+    exit 1
+fi
+
 # Get current project ID
 if ! grep -q "PROJECT_ID" .env
 then
@@ -112,10 +139,13 @@ then
         echo -e "${YELLOW}No compute region currently set${NC}"
     fi
 fi
+}
+
+# AZURE
 
 
-
-# Azure
+configure_azure() {
+echo "Running Azure..."
 echo "Checking for Azure CLI installation..."
 if ! command -v az &> /dev/null
 then
@@ -280,3 +310,75 @@ done
 echo "Azure environment setup completed successfully!"
 
 # touch .env
+}
+configure_all_providers() {
+    log_info "Performing comprehensive multi-cloud configuration..."
+    
+    
+    # Detailed configuration for each cloud
+    configure_aws
+    configure_gcp
+    configure_azure
+    log_info "Multi-cloud configuration completed successfully"
+}
+
+# Argument parsing
+CLOUD=""
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --cloud)
+            shift
+            CLOUD="$1"
+            break
+            ;;
+        --cloud=*)
+            CLOUD="${1#*=}"
+            break
+            ;;
+    esac
+    shift
+done
+
+# log_debug "Raw arguments: $@"
+# log_debug "Cloud argument received: '$CLOUD'"
+
+# Validate cloud argument
+# validate_cloud_arg() {
+#     case "$1" in
+#         aws|gcp|azure)
+#             return 0
+#             ;;
+#         *)
+#             log_error "Invalid cloud provider: '$1'"
+#             log_error "Supported providers: aws, gcp, azure"
+#             exit 1
+#             ;;
+#     esac
+# }
+
+# Main configuration logic
+main_configuration() {
+    # Validate cloud argument
+    # validate_cloud_arg "$CLOUD"
+    
+    # Configure specific cloud provider
+    log_info "Configuring $CLOUD cloud provider..."
+    case "$CLOUD" in
+        aws)
+            configure_aws
+            ;;
+        gcp)
+            configure_gcp
+            ;;
+        azure)
+            configure_azure
+            ;;
+        all)
+            configure_all_providers
+            ;;
+        *)
+    esac
+}
+
+# Execute main configuration
+main_configuration
