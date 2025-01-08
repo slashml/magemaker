@@ -1,5 +1,6 @@
 import argparse
 import logging
+import sys
 import traceback
 import yaml
 logging.getLogger("sagemaker.config").setLevel(logging.WARNING)
@@ -9,8 +10,15 @@ from magemaker.sagemaker.create_model import deploy_huggingface_model_to_sagemak
 from magemaker.sagemaker.fine_tune_model import fine_tune_model
 from magemaker.schemas.deployment import Deployment
 from magemaker.schemas.model import Model, ModelSource
-
+import subprocess
 from magemaker.main import main, deploy_model
+
+RED='\033[0;31m'  #red
+NC='\033[0m' # No Color
+YELLOW='\033[1;33m'
+GREEN='\033[0;32m'
+
+
 
 def runner():
     # if (not os.path.exists(os.path.expanduser('~/.aws')) or not os.path.exists('.env')):
@@ -45,7 +53,35 @@ def runner():
         "--verbose",
         help="increase output verbosity",
         action="store_true")
+    
+    parser.add_argument(
+        "--cloud", 
+        choices=['aws', 'gcp', 'azure', 'all'], 
+        help="Specify the cloud provider for configuration and deployment"
+    )
+    if len(sys.argv) == 1:
+        # just for the case of magemaker
+        # parser.print_help()
+        print(f"{RED}Error: You must specify a cloud provider.{NC}")
+        print(f"{GREEN}Possible solutions:{NC}")
+        print(f"{YELLOW}- magemaker --cloud gcp{NC}")
+        print(f"{YELLOW}- magemaker --cloud aws{NC}")
+        print(f"{YELLOW}- magemaker --cloud azure{NC}")
+        print(f"{YELLOW}- magemaker --cloud all{NC}")
+        sys.exit(1)
+
     args = parser.parse_args()
+
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    preflight_path = os.path.join(script_dir, 'scripts', 'preflight.sh')
+    cmd = ["bash", preflight_path]
+
+    if args.cloud:
+        if args.deploy is not None:
+            print(f"{RED}Error: You cannot specify a deployment configuration file with the --cloud flag. We will pick the destination from the yaml file{NC}")
+        else:
+            cmd.extend(["--cloud", args.cloud])
+
 
     # Setup logging
     if args.verbose:
@@ -53,10 +89,10 @@ def runner():
     else:
         loglevel = logging.INFO
 
-    if args.hf is not None:
-        instance_type = args.instance or "ml.m5.xlarge"
-        predictor = deploy_huggingface_model(args.hf, instance_type)
-        quit()
+    # if args.hf is not None:
+    #     instance_type = args.instance or "ml.m5.xlarge"
+    #     predictor = deploy_huggingface_model(args.hf, instance_type)
+    #     quit()
 
     if args.deploy is not None:
         try:
@@ -68,6 +104,13 @@ def runner():
 
                 # TODO: Support multi-model endpoints
                 model = configuration['models'][0]
+
+            destination = deployment.destination
+            # Run the script
+            print(f"Destination for deployment: {destination}")
+            cmd.extend(["--cloud", destination])
+            subprocess.run(cmd, check=True)
+
             deploy_model(deployment, model)
         except:
             traceback.print_exc()
@@ -126,7 +169,20 @@ if __name__ == '__main__':
         "--verbose",
         help="increase output verbosity",
         action="store_true")
+    
+    parser.add_argument(
+        "--cloud", 
+        choices=['aws', 'gcp', 'azure'], 
+        help="Specify the cloud provider for configuration and deployment"
+    )
     args = parser.parse_args()
+
+    cmd = ["bash", "scripts/preflight.sh"]
+    if args.cloud:
+        cmd.append(f"--cloud={args.cloud}")
+
+    # Run the script
+    subprocess.run(cmd, check=True)
 
     # Setup logging
     if args.verbose:

@@ -24,15 +24,18 @@ from .resources import list_vertex_ai_endpoints
 #     # assert endpoints[1]['EndpointName'] == 'endpoint2'
 
 
-def test_list_sagemaker_endpoints_no_filter():
+def test_list_vertex_ai_endpoints():
     # actual call for quick testing
     endpoints = list_vertex_ai_endpoints()
-
-    import pdb
-    pdb.set_trace()
-    # only need EndpointName and InstanceType in the root dict
     for endpoint in endpoints:
-        assert "resource_name" in endpoints[0]
-        assert "machine_type" in endpoints[0]
+        assert "EndpointName" in endpoint
+        assert "InstanceType" in endpoint
+
+    # import pdb
+    # pdb.set_trace()
+    # only need EndpointName and InstanceType in the root dict
+    # for endpoint in endpoints:
+    #     assert "resource_name" in endpoints[0]
+    #     assert "machine_type" in endpoints[0]
 
     

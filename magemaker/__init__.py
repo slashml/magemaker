@@ -3,7 +3,6 @@ import os
 import pkg_resources
 import subprocess
 
-print('test')
 def pre_flight():
     print('running preflight checks')
 

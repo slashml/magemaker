@@ -65,6 +65,8 @@ def _deploy_model(subscription_id, resource_group, workspace_name, deployment: D
     
     print('endpoint name', endpoint_name)
 
+    print('Deploying model started, waiting for the endpoint to be up ...')
+
     # wait for the endpoint to be up
     ml_client.begin_create_or_update(ManagedOnlineEndpoint(name=endpoint_name)).wait()
 
