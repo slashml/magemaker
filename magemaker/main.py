@@ -157,7 +157,7 @@ def main(args=None, loglevel='INFO'):
 
     while True:
         active_endpoints = fetch_active_endpoints(args)
-        print('active endpoints', active_endpoints)
+
         questions = [
             inquirer.List(
                 'action',

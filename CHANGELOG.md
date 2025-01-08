@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.1.11
+## 0.1.12
 
 ### Changed/fixed
 - Fixed active endpoint fetching making it conditional based on cloud flag
