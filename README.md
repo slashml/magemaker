@@ -2,7 +2,7 @@
 
 <br />
 <div align="center">
-  <h3 align="center">Magemaker v0.1.6, by SlashML</h3>
+  <h3 align="center">Magemaker by SlashML</h3>
 
   <p align="center">
     Deploy open source AI models to AWS, GCP, and Azure in minutes.
@@ -51,7 +51,7 @@ To get a local copy up and running follow these simple steps.
   * GCP for Vertex AI
   * Azure for Azure ML
 * Cloud CLI tools:
-  * AWS CLI (optional)
+  * AWS CLI (optional)s
   * Google Cloud SDK for GCP
   * Azure CLI for Azure
 * Hugging Face account (for access to models)
@@ -68,7 +68,7 @@ Run it by simply doing the following:
 magemaker
 ```
 
-The first time you run this command, it will take 1-2 minutes to configure everything. You'll be guided through setting up your chosen cloud provider(s).
+The first time you run this command, it will ask you for a cloud provider flag. You can specify it using `magemaker --cloud gcp`. The possible options for cloud provider flags are `gcp|aws|azure|all`, where `all` will configure all providers. If this is your first time running it, it will take some time to configure it. You'll be guided through setting up your chosen cloud provider(s).
 
 ## Using Magemaker
 

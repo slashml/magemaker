@@ -81,7 +81,7 @@ def runner():
             print(f"{RED}Error: You cannot specify a deployment configuration file with the --cloud flag. We will pick the destination from the yaml file{NC}")
         else:
             cmd.extend(["--cloud", args.cloud])
-
+            subprocess.run(cmd, check=True)
 
     # Setup logging
     if args.verbose:

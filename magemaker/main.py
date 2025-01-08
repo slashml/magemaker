@@ -116,7 +116,7 @@ def query_endpoint(endpoint, query):
     name, provider, resource_name = endpoint
 
     if provider == 'Sagemaker':
-        config = get_config_for_endpoint(endpoint)
+        config = get_config_for_endpoint(name)
 
         # support multi-model endpoints
         if config:
@@ -163,7 +163,6 @@ def main(args=None, loglevel='INFO'):
 
         action = answers['action']
 
-        print('args', args)
         match action:
             case Actions.LIST:
                 sagemaker_endpoints, vertex_ai_endpoints, azure_endpoints = active_endpoints
@@ -223,7 +222,14 @@ def main(args=None, loglevel='INFO'):
                 endpoints_to_delete = answers['endpoints']
                 delete_endpoint(endpoints_to_delete)
             case Actions.QUERY:
-                active_endpoints = active_endpoints[0] + active_endpoints[1] + active_endpoints[2]
+                if args.cloud in ['aws']:
+                    active_endpoints = active_endpoints[0]
+                elif args.cloud in ['gcp']:
+                    active_endpoints = active_endpoints[1]
+                elif args.cloud in ['azure']:
+                    active_endpoints = active_endpoints[2]
+                elif args.cloud in ['all']:
+                    active_endpoints = active_endpoints[0] + active_endpoints[1] + active_endpoints[2]
 
                 if (len(active_endpoints) == 0):
                     print_success("No Endpoints to query!")
