@@ -24,11 +24,12 @@ log_error() {
 
 # Configuration functions
 configure_aws() {
-echo "Running AWS Configuration..."
-echo "Running AWS..."
+echo "Configuring AWS..."
 echo "you need to create an aws user with access to Sagemaker"
 echo "if you don't know how to do that follow this doc https://docs.google.com/document/d/1NvA6uZmppsYzaOdkcgNTRl7Nb4LbpP9Koc4H_t5xNSg/edit?usp=sharing"
 
+
+# green
 if ! command -v aws &> /dev/null
 then
     OS="$(uname -s)"
@@ -49,6 +50,9 @@ then
     esac
 fi
 
+# echo green that press enter if you have already done this
+echo -e "${GREEN}Press enter in the following configuration steps if you have already done this${NC}"
+
 aws configure set region us-east-1 && aws configure
 touch .env
 
@@ -64,8 +68,7 @@ fi
 # GCP
 
 configure_gcp() {
-    echo "Running GCP Configuration..."
-    echo "Running GCP..."
+    echo "Configuring GCP..."
 echo "you need to create a GCP service account with access to GCS and vertex ai"
 echo "if you don't know how to do that follow this doc https://docs.google.com/document/d/1NvA6uZmppsYzaOdkcgNTRl7Nb4LbpP9Koc4H_t5xNSg/edit?usp=sharing"
 
@@ -107,13 +110,13 @@ if [ -z "$ACCOUNTS" ]; then
     exit 0
 fi
 
-echo "Setting up application default credentials..."
-gcloud auth application-default login --no-launch-browser
+# echo "Setting up application default credentials..."
+# gcloud auth application-default login --no-launch-browser
 
-if [ $? -ne 0 ]; then
-    echo -e "${RED}Failed to set application default credentials${NC}"
-    exit 1
-fi
+# if [ $? -ne 0 ]; then
+#     echo -e "${RED}Failed to set application default credentials${NC}"
+#     exit 1
+# fi
 
 # Get current project ID
 if ! grep -q "PROJECT_ID" .env
@@ -142,10 +145,8 @@ fi
 }
 
 # AZURE
-
-
 configure_azure() {
-echo "Running Azure..."
+echo "Configuring Azure..."
 echo "Checking for Azure CLI installation..."
 if ! command -v az &> /dev/null
 then
@@ -362,7 +363,6 @@ main_configuration() {
     # validate_cloud_arg "$CLOUD"
     
     # Configure specific cloud provider
-    log_info "Configuring $CLOUD cloud provider..."
     case "$CLOUD" in
         aws)
             configure_aws

@@ -60,6 +60,7 @@ def runner():
         help="Specify the cloud provider for configuration and deployment"
     )
     if len(sys.argv) == 1:
+        # just for the case of magemaker
         # parser.print_help()
         print(f"{RED}Error: You must specify a cloud provider.{NC}")
         print(f"{GREEN}Possible solutions:{NC}")
@@ -68,19 +69,19 @@ def runner():
         print(f"{YELLOW}- magemaker --cloud azure{NC}")
         print(f"{YELLOW}- magemaker --cloud all{NC}")
         sys.exit(1)
-    args = parser.parse_args()
 
+    args = parser.parse_args()
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
     preflight_path = os.path.join(script_dir, 'scripts', 'preflight.sh')
     cmd = ["bash", preflight_path]
 
     if args.cloud:
-        cmd.extend(["--cloud", args.cloud])
+        if args.deploy is not None:
+            print(f"{RED}Error: You cannot specify a deployment configuration file with the --cloud flag. We will pick the destination from the yaml file{NC}")
+        else:
+            cmd.extend(["--cloud", args.cloud])
 
-
-    # Run the script
-    subprocess.run(cmd, check=True)
 
     # Setup logging
     if args.verbose:
@@ -88,10 +89,10 @@ def runner():
     else:
         loglevel = logging.INFO
 
-    if args.hf is not None:
-        instance_type = args.instance or "ml.m5.xlarge"
-        predictor = deploy_huggingface_model(args.hf, instance_type)
-        quit()
+    # if args.hf is not None:
+    #     instance_type = args.instance or "ml.m5.xlarge"
+    #     predictor = deploy_huggingface_model(args.hf, instance_type)
+    #     quit()
 
     if args.deploy is not None:
         try:
@@ -103,6 +104,13 @@ def runner():
 
                 # TODO: Support multi-model endpoints
                 model = configuration['models'][0]
+
+            destination = deployment.destination
+            # Run the script
+            print(f"Destination for deployment: {destination}")
+            cmd.extend(["--cloud", destination])
+            subprocess.run(cmd, check=True)
+
             deploy_model(deployment, model)
         except:
             traceback.print_exc()

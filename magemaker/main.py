@@ -80,6 +80,10 @@ def fetch_active_endpoints():
 
 
 def print_active_endpoints(active_endpoints):
+    if len(active_endpoints) == 0:
+        print_error("No active endpoints.")
+        return
+
     for endpoint in active_endpoints:
         endpoint_id = endpoint.get('resource_name','').split('/')[-1]
         endpoint_str = f'with id [green]{endpoint_id}[/green]' if endpoint_id else ''
@@ -159,32 +163,47 @@ def main(args=None, loglevel='INFO'):
 
         action = answers['action']
 
+        print('args', args)
         match action:
             case Actions.LIST:
                 sagemaker_endpoints, vertex_ai_endpoints, azure_endpoints = active_endpoints
 
                 if len(sagemaker_endpoints) != 0 or len(vertex_ai_endpoints) != 0 or len(azure_endpoints) != 0:
                     # printing sagemaker endpoints
-                    print("[red]Sagemaker[/red] Endpoints:")
-                    print_active_endpoints(sagemaker_endpoints) 
-                    print('\n')
+                    if args.cloud in ['all', None, 'aws']:
+                        print("[red]Sagemaker[/red] Endpoints:")
+                        print_active_endpoints(sagemaker_endpoints) 
+                        print('\n')
 
-                    print('[green]GCP[/green] Endpoints')
-                    print_active_endpoints(vertex_ai_endpoints) 
-                    print('\n')
+                    if args.cloud in ['all', None, 'gcp']:
+                        print("[green]GCP[/green] Endpoints:")
+                        print_active_endpoints(vertex_ai_endpoints) 
+                        print('\n')
 
-                    print('[blue]Azure[/blue] Endpoints')
-                    print_active_endpoints(azure_endpoints) 
-                    print('\n')
+                    if args.cloud in ['all', None, 'azure']:
+                        print("[blue]Azure[/blue] Endpoints:")
+                        print_active_endpoints(azure_endpoints) 
+                        print('\n')
 
                     print('\n')
 
                 else:
                     print_error('No active endpoints.\n')
             case Actions.DEPLOY:
-                build_and_deploy_model(instances, instance_thread)
+                if args.cloud in ['all', None, 'aws']:
+                    print('Only [red]AWS[/red] is supported at the moment')
+                    build_and_deploy_model(instances, instance_thread)
+                else:
+                    print_error('Only AWS is supported from dropdown at the moment. Use a `--deploy` flag and a yaml file to deploy to gcp and azure\n')
             case Actions.DELETE:
-                active_endpoints = active_endpoints[0] + active_endpoints[1] + active_endpoints[2]
+                if args.cloud in ['aws']:
+                    active_endpoints = active_endpoints[0]
+                elif args.cloud in ['gcp']:
+                    active_endpoints = active_endpoints[1]
+                elif args.cloud in ['azure']:
+                    active_endpoints = active_endpoints[2]
+                elif args.cloud in ['all']:
+                    active_endpoints = active_endpoints[0] + active_endpoints[1] + active_endpoints[2]
 
                 if (len(active_endpoints) == 0):
                     print_success("No Endpoints to delete!")
