@@ -70,10 +70,17 @@ def deploy_model(deployment: Deployment, model: Model):
             deploy_custom_huggingface_model(deployment, model)
 
 
-def fetch_active_endpoints():
-    sagemaker_endpoints = list_sagemaker_endpoints()
-    vertex_ai_endpoints = list_vertex_ai_endpoints()
-    azure_endpoints = list_azure_endpoints()
+def fetch_active_endpoints(args):
+    sagemaker_endpoints, vertex_ai_endpoints, azure_endpoints = [], [], []
+
+    if args.cloud in ['all', None, 'aws']:
+        sagemaker_endpoints = list_sagemaker_endpoints()
+
+    if args.cloud in ['all', None, 'gcp']:
+        vertex_ai_endpoints = list_vertex_ai_endpoints()
+    
+    if args.cloud in ['all', None, 'azure']:
+        azure_endpoints = list_azure_endpoints()
 
     return sagemaker_endpoints, vertex_ai_endpoints, azure_endpoints
 
@@ -149,7 +156,8 @@ def main(args=None, loglevel='INFO'):
     instance_thread.start()
 
     while True:
-        active_endpoints = fetch_active_endpoints()
+        active_endpoints = fetch_active_endpoints(args)
+        print('active endpoints', active_endpoints)
         questions = [
             inquirer.List(
                 'action',
