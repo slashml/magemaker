@@ -20,11 +20,11 @@ from magemaker.utils.model_utils import get_unique_endpoint_name, get_model_and_
 from magemaker.huggingface import HuggingFaceTask
 from magemaker.huggingface.hf_hub_api import get_hf_task
 
-HUGGING_FACE_HUB_TOKEN = dotenv_values(".env").get("HUGGING_FACE_HUB_KEY")
-SAGEMAKER_ROLE = dotenv_values(".env")["SAGEMAKER_ROLE"]
 
 
 def deploy_huggingface_model_to_sagemaker(deployment, model):
+    HUGGING_FACE_HUB_TOKEN = dotenv_values(".env").get("HUGGING_FACE_HUB_KEY")
+    SAGEMAKER_ROLE = dotenv_values(".env").get("SAGEMAKER_ROLE")
 
     region_name = session.region_name
     task = get_hf_task(model)
@@ -103,6 +103,7 @@ def deploy_huggingface_model_to_vertexai(deployment, model):
 
 
 def deploy_custom_huggingface_model(deployment: Deployment, model: Model):
+    SAGEMAKER_ROLE = dotenv_values(".env").get("SAGEMAKER_ROLE")
     region_name = session.region_name
     if model.location is None:
         print_error("Missing model source location.")
@@ -169,6 +170,8 @@ def deploy_custom_huggingface_model(deployment: Deployment, model: Model):
 
 
 def create_and_deploy_jumpstart_model(deployment: Deployment, model: Model):
+    SAGEMAKER_ROLE = dotenv_values(".env").get("SAGEMAKER_ROLE")
+
     region_name = session.region_name
     endpoint_name = get_unique_endpoint_name(
         model.id, deployment.endpoint_name)

@@ -27,8 +27,6 @@ from magemaker.schemas.model import Model
 from magemaker.utils.model_utils import get_unique_endpoint_name
 from magemaker.utils.rich_utils import print_error, print_success
 
-HUGGING_FACE_HUB_TOKEN = dotenv_values(".env").get("HUGGING_FACE_HUB_KEY")
-
 def deploy_huggingface_model_to_azure(deployment:Deployment, model: Model):
     subscription_id = dotenv_values(".env").get("AZURE_SUBSCRIPTION_ID")
     resource_group = dotenv_values(".env").get("AZURE_RESOURCE_GROUP")

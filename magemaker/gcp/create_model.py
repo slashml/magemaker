@@ -11,7 +11,6 @@ from magemaker.utils.model_utils import get_unique_endpoint_name
 
 from magemaker.config import write_config
 
-HUGGING_FACE_HUB_TOKEN = dotenv_values(".env").get("HUGGING_FACE_HUB_KEY")
 
 def deploy_huggingface_model_to_vertexai(deployment:Deployment, model: Model):
     location = dotenv_values(".env").get("GCLOUD_REGION")
@@ -41,6 +40,7 @@ def _deploy_model(
         "NUM_SHARD": "1",
         # "HF_TOKEN": ""  # Add your Hugging Face token if needed
     }
+    HUGGING_FACE_HUB_TOKEN = dotenv_values(".env").get("HUGGING_FACE_HUB_KEY")
 
     if HUGGING_FACE_HUB_TOKEN is not None: 
         env_vars['HF_TOKEN'] = HUGGING_FACE_HUB_TOKEN
