@@ -26,6 +26,8 @@ dependencies = [
     'azure-identity==1.19.0',
     'azure-mgmt-resource==23.2.0',
     'marshmallow==3.23.2',
+    'click>=8.0.0',
+    'docker>=6.1.0',
 ]
 requires-python = ">=3.11"
 readme = "README.md"
@@ -34,6 +36,7 @@ license = {text = "MIT"}
 
 [project.scripts]
 magemaker = "magemaker.runner:runner"
+magemaker-docker = "magemaker.docker.cli:main"
 
 
 [build-system]
@@ -45,7 +48,7 @@ distribution = true
 package-dir = "magemaker"
 
 [tool.pdm.build]
-includes = ["magemaker", "magemaker/scripts/preflight.sh", "magemaker/scripts/setup_role.sh"]  # Include setup.sh in the package distribution
+includes = ["magemaker", "magemaker/scripts/preflight.sh", "magemaker/scripts/setup_role.sh", "magemaker/docker/Dockerfile", "magemaker/docker/entrypoint.sh"]  # Include setup.sh in the package distribution
 
 
 [tool.pdm.dev-dependencies]
