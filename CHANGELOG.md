@@ -1,10 +1,11 @@
 # CHANGELOG
 
-## 0.1.14
+## 0.1.15
 
 ### Changed/fixed
 - Fixed aws query bug
 - Fixed deployment wihtout .env file
+- Fixed gcp deployment, and querying
 
 ## 0.1.12
 

@@ -1,6 +1,6 @@
 [project]
 name = "magemaker"
-version = "0.1.14"
+version = "0.1.15"
 description = "A CLI tool to fine-tuning and deploying open-source models"
 authors = [
     {name = "eff-kay", email = "faizank@slashml.com"},
