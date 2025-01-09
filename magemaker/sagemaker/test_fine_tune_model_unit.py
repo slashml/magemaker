@@ -2,7 +2,6 @@ import pytest
 from unittest.mock import patch, MagicMock
 import sys
 
-# Mock required modules before importing
 sys.modules['datasets'] = MagicMock()
 sys.modules['transformers'] = MagicMock()
 
