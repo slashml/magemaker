@@ -128,6 +128,9 @@ then
         echo -e "${GREEN}Exported PROJECT_ID=${NC}${PROJECT_ID}"
     else
         echo -e "${YELLOW}No project currently set${NC}"
+        echo -e "Please run: ${CYAN}gcloud config set project YOUR_PROJECT_ID${NC}"
+        echo -e "To list available projects, run: ${CYAN}gcloud projects list${NC}"
+        exit 1
     fi
 fi
 
@@ -140,6 +143,9 @@ then
         echo -e "${GREEN}Exported GCLOUD_REGION=${NC}${CURRENT_REGION}"
     else
         echo -e "${YELLOW}No compute region currently set${NC}"
+        echo -e "Please run: ${CYAN}gcloud config set compute/region REGION${NC}"
+        echo -e "To list available regions, run: ${CYAN}gcloud compute regions list${NC}"
+        exit 1
     fi
 fi
 }

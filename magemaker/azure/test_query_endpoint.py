@@ -6,7 +6,7 @@ import json
 import dotenv
 
 
-from .query_endpoint import query_vertexai_endpoint_rest
+from .query_endpoint import query_azure_endpoint
 
 def test_query_endpoint_rest():
     import google.auth
@@ -18,4 +18,4 @@ def test_query_endpoint_rest():
     input_text = 'This is a test'
 
 
-    resp = query_vertexai_endpoint_rest(endpoint_id=endpoint_id, input_text=input_text)
+    resp = query_azure_endpoint(endpoint_id=endpoint_id, input_text=input_text)

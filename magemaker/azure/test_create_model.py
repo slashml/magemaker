@@ -2,10 +2,10 @@
 from magemaker.schemas.model import Model
 from magemaker.schemas.deployment import Deployment
 
-from magemaker.gcp.create_model import deploy_huggingface_model_to_vertexai
+from magemaker.azure.create_model import deploy_huggingface_model_to_azure
 
 
-def test_deploy_huggingface_model_to_vertexai():
+def test_deploy_huggingface_model_to_azure():
 
     deployment = Deployment(
         endpoint_name="test-endpoint",
@@ -21,5 +21,5 @@ def test_deploy_huggingface_model_to_vertexai():
         source="huggingface",
     )
 
-    deploy_huggingface_model_to_vertexai(deployment=deployment, model=model)
+    deploy_huggingface_model_to_azure(deployment=deployment, model=model)
     pass
