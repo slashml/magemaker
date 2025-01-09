@@ -1,22 +1,43 @@
-# Use an official Python runtime as a parent image
-FROM python:3.12-slim
+FROM python:3.11-slim
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    build-essential \
+    unzip \
+    nano \
+    vim \
+    && rm -rf /var/lib/apt/lists/*
 
-# Set the working directory in the container
+# Set working directory
 WORKDIR /app
 
-# Copy the project files to the working directory
-COPY . .
+# Copy your magemaker package
+COPY . /app/
 
-# Install PDM and use it to install dependencies
-RUN pip install --no-cache-dir pdm \
-    && pdm install --no-interactive
+# Install package and dependencies
+RUN pip install --no-cache-dir -e .
 
-# Expose port 8000 to the outside world
-EXPOSE 8000
+# Install AWS CLI
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
+    && unzip awscliv2.zip \
+    && ./aws/install \
+    && rm awscliv2.zip \
+    && rm -rf aws
 
-# Run uvicorn when the container launches
-CMD ["pdm", "run", "uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000"]
+# Install Google Cloud SDK
+RUN curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-458.0.0-linux-x86_64.tar.gz -o google-cloud-sdk.tar.gz \
+    && tar -xf google-cloud-sdk.tar.gz \
+    && ./google-cloud-sdk/install.sh --quiet \
+    && rm google-cloud-sdk.tar.gz
+
+# Add Google Cloud SDK to PATH
+ENV PATH $PATH:/app/google-cloud-sdk/bin
+
+# Copy and setup entrypoint
+COPY magemaker/docker/entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["entrypoint.sh"]
+CMD ["bash"]

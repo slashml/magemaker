@@ -2,7 +2,7 @@ deployment: !Deployment
   destination: aws
   endpoint_name: facebook--opt-125m-202410251736
   instance_count: 1
-  instance_type: ml.m5.xlarge
+  instance_type: ml.t2.medium
   num_gpus: null
   quantization: null
 models:
