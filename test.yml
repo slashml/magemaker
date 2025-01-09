@@ -1,0 +1,12 @@
+deployment:
+  endpoint_name: test-endpoint
+  instance_type: ml.g4dn.xlarge
+  instance_count: 1
+  destination: sagemaker
+  quantization: bitsandbytes
+  num_gpus: 1
+
+models:
+  - id: facebook/opt-125m
+    source: huggingface
+    task: text-generation
