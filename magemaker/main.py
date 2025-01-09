@@ -128,7 +128,7 @@ def query_endpoint(endpoint, query):
         # support multi-model endpoints
         if config:
             config = (config.deployment, config.models[0])
-            make_query_request(endpoint, query, config)
+            make_query_request(name, query, config)
         
         print('Config for this model not found, try another model')
 

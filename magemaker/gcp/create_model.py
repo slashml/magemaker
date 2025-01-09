@@ -11,14 +11,14 @@ from magemaker.utils.model_utils import get_unique_endpoint_name
 
 from magemaker.config import write_config
 
-HUGGING_FACE_HUB_TOKEN = dotenv_values(".env").get("HUGGING_FACE_HUB_KEY")
 
 def deploy_huggingface_model_to_vertexai(deployment:Deployment, model: Model):
     location = dotenv_values(".env").get("GCLOUD_REGION")
     project_id = dotenv_values(".env").get("PROJECT_ID")
 
-    _deploy_model(project_id=project_id, location=location, model=model, deployment=deployment)
-    pass
+    endpoint = _deploy_model(project_id=project_id, location=location, model=model, deployment=deployment)
+
+    return endpoint
 
 def _deploy_model(
     *,
@@ -41,6 +41,7 @@ def _deploy_model(
         "NUM_SHARD": "1",
         # "HF_TOKEN": ""  # Add your Hugging Face token if needed
     }
+    HUGGING_FACE_HUB_TOKEN = dotenv_values(".env").get("HUGGING_FACE_HUB_KEY")
 
     if HUGGING_FACE_HUB_TOKEN is not None: 
         env_vars['HF_TOKEN'] = HUGGING_FACE_HUB_TOKEN
@@ -51,7 +52,8 @@ def _deploy_model(
     # Create model using pre-built container
     model_artifact = aiplatform.Model.upload(
         display_name=display_name,
-        serving_container_image_uri="us-docker.pkg.dev/deeplearning-platform-release/gcr.io/huggingface-text-generation-inference-cu121.2-2.ubuntu2204.py310",
+        # serving_container_image_uri="us-docker.pkg.dev/deeplearning-platform-release/gcr.io/huggingface-text-generation-inference-cu121.2-2.ubuntu2204.py310",
+        serving_container_image_uri="us-docker.pkg.dev/deeplearning-platform-release/gcr.io/huggingface-text-generation-inference-cu124.2-4.ubuntu2204.py311",
         serving_container_environment_variables=env_vars
     )
 
@@ -91,9 +93,6 @@ def _deploy_model(
             console.log("[magenta]An error occurred[/magenta]")
             console.print_exception()
             quit()
-
-    print_success(
-        f"{model.id} is now up and running at the endpoint [blue]{predictor.endpoint_name}")
 
     write_config(deployment, model)
     return predictor

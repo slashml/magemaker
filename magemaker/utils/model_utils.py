@@ -9,7 +9,6 @@ from magemaker.schemas.model import Model, ModelSource
 from magemaker.schemas.query import Query
 from magemaker.session import sagemaker_session
 from typing import Dict, Tuple, Optional
-HUGGING_FACE_HUB_TOKEN = dotenv_values(".env").get("HUGGING_FACE_HUB_KEY")
 
 
 def get_unique_endpoint_name(model_id: str, endpoint_name: str = None):
@@ -51,10 +50,12 @@ def get_sagemaker_model_and_task(endpoint_or_model_name: str):
 
 
 def get_hugging_face_pipeline_task(model_name: str):
+    HUGGING_FACE_HUB_TOKEN = dotenv_values(".env").get("HUGGING_FACE_HUB_KEY")
+
     hf_api = HfApi()
     try:
         model_info = hf_api.model_info(
-            model_name, token=HUGGING_FACE_HUB_TOKEN)
+            model_name, token = HUGGING_FACE_HUB_TOKEN)
         task = model_info.pipeline_tag
     except Exception:
         print_error("Model not found, please try another.")

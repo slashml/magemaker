@@ -16,7 +16,6 @@ from transformers import AutoTokenizer
 
 from dotenv import load_dotenv
 load_dotenv()
-SAGEMAKER_ROLE = os.environ.get("SAGEMAKER_ROLE")
 
 
 def prep_hf_data(s3_bucket: str, dataset_name_or_path: str, model: Model):
@@ -79,6 +78,8 @@ def train_model(training: Training, model: Model, estimator):
 
 
 def fine_tune_model(training: Training, model: Model):
+    SAGEMAKER_ROLE = os.environ.get("SAGEMAKER_ROLE")
+
     estimator = None
     match model.source:
         case ModelSource.Sagemaker:

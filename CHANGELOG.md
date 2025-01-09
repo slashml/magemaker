@@ -1,11 +1,16 @@
 # CHANGELOG
 
+## 0.1.15
+
+### Changed/fixed
+- Fixed aws query bug
+- Fixed deployment wihtout .env file
+- Fixed gcp deployment, and querying
+
 ## 0.1.12
 
 ### Changed/fixed
 - Fixed active endpoint fetching making it conditional based on cloud flag
-
-# CHANGELOG
 
 ## 0.1.10
 

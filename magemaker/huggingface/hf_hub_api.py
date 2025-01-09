@@ -4,10 +4,10 @@ from magemaker.huggingface import hf_api
 from magemaker.schemas.model import Model
 from magemaker.utils.rich_utils import print_error
 
-HUGGING_FACE_HUB_TOKEN = dotenv_values(".env").get("HUGGING_FACE_HUB_KEY")
 
 
 def get_hf_task(model: Model):
+    HUGGING_FACE_HUB_TOKEN = dotenv_values(".env").get("HUGGING_FACE_HUB_KEY")
     task = None
     try:
         model_info = hf_api.model_info(
