@@ -1,0 +1,15 @@
+deployment: !Deployment
+  destination: aws
+  endpoint_name: distilbert-base-uncased-202501092244
+  instance_count: 1
+  instance_type: ml.t2.medium
+  num_gpus: null
+  quantization: null
+models:
+- !Model
+  id: distilbert-base-uncased
+  location: null
+  predict: null
+  source: huggingface
+  task: fill-mask
+  version: null
