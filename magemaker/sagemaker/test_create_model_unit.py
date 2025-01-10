@@ -18,6 +18,7 @@ def sample_huggingface_model():
 def sample_deployment():
     return Deployment(destination="aws", instance_type="ml.m5.xlarge", instance_count=1)
 
+@pytest.mark.unit
 @patch('magemaker.sagemaker.create_model.S3Uploader.upload')
 @patch('magemaker.sagemaker.create_model.HuggingFaceModel')
 def test_custom_model_deployment(mock_hf_model, mock_s3_upload, sample_deployment, tmp_path):
@@ -44,6 +45,7 @@ def test_custom_model_deployment(mock_hf_model, mock_s3_upload, sample_deploymen
     mock_s3_upload.assert_called_once()
     mock_hf_model_return.deploy.assert_called_once()
 
+@pytest.mark.unit
 @patch('magemaker.sagemaker.create_model.JumpStartModel')
 def test_jumpstart_model_deployment(mock_jumpstart_model, sample_deployment):
     # Use a valid JumpStart model ID

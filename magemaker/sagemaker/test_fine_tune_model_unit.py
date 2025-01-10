@@ -27,6 +27,7 @@ def sample_sagemaker_model():
         version="1.0"
     )
 
+@pytest.mark.unit
 @patch('magemaker.sagemaker.fine_tune_model.sagemaker.hyperparameters.retrieve_default')
 @patch('magemaker.sagemaker.fine_tune_model.train_model')
 @patch('magemaker.sagemaker.fine_tune_model.JumpStartEstimator')
@@ -52,6 +53,7 @@ def test_fine_tune_sagemaker_model(
     mock_jumpstart_estimator.assert_called_once()
     mock_train_model.assert_called_once()
 
+@pytest.mark.unit
 @patch('magemaker.sagemaker.fine_tune_model.train_model')
 def test_fine_tune_unsupported_model_sources(mock_train_model):
     # Test HuggingFace model source

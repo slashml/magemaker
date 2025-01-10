@@ -10,6 +10,7 @@ from magemaker.sagemaker.query_endpoint import make_query_request
 from magemaker.schemas.deployment import Deployment
 from magemaker.schemas.model import Model
 
+@pytest.mark.unit
 def test_make_query_request():
     with patch('magemaker.sagemaker.query_endpoint.is_sagemaker_model') as mock_is_sagemaker, \
          patch('magemaker.sagemaker.query_endpoint.query_sagemaker_endpoint') as mock_sagemaker_query, \

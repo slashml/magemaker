@@ -2,6 +2,7 @@ import pytest
 from unittest.mock import patch, MagicMock
 from magemaker.sagemaker.delete_model import delete_sagemaker_model
 
+@pytest.mark.unit
 def test_delete_sagemaker_model():
     # Test deleting multiple endpoints
     with patch('boto3.client') as mock_boto_client:
@@ -16,6 +17,7 @@ def test_delete_sagemaker_model():
         mock_sagemaker_client.delete_endpoint.assert_any_call(EndpointName='endpoint1')
         mock_sagemaker_client.delete_endpoint.assert_any_call(EndpointName='endpoint2')
 
+@pytest.mark.unit
 def test_delete_empty_endpoints():
     # Test deleting with empty list
     with patch('magemaker.sagemaker.delete_model.print_success') as mock_print_success:

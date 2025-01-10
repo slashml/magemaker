@@ -3,6 +3,7 @@ from unittest.mock import patch, MagicMock
 from magemaker.schemas.model import Model
 from magemaker.huggingface.hf_hub_api import get_hf_task
 
+@pytest.mark.unit
 def test_get_hf_task_successful():
     with patch('magemaker.huggingface.hf_hub_api.hf_api') as mock_hf_api:
         mock_model_info = MagicMock()
@@ -15,6 +16,7 @@ def test_get_hf_task_successful():
         
         assert task == "text-classification"
 
+@pytest.mark.unit
 def test_get_hf_task_with_transformers_info():
     with patch('magemaker.huggingface.hf_hub_api.hf_api') as mock_hf_api:
         mock_model_info = MagicMock()
@@ -27,6 +29,7 @@ def test_get_hf_task_with_transformers_info():
         
         assert task == "text-classification"
 
+@pytest.mark.unit
 def test_get_hf_task_exception():
     with patch('magemaker.huggingface.hf_hub_api.hf_api') as mock_hf_api, \
          patch('magemaker.huggingface.hf_hub_api.console') as mock_console, \
