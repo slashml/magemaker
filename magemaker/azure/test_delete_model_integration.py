@@ -1,32 +1,54 @@
-import os
 import pytest
-import uuid
-from dotenv import load_dotenv
-
 from magemaker.azure.delete_model import delete_azure_model
-from azure.identity import DefaultAzureCredential
+from dotenv import load_dotenv
 from azure.ai.ml import MLClient
-from azure.core.exceptions import ResourceNotFoundError
+from azure.identity import DefaultAzureCredential
+import os
 
-# Load environment variables
-load_dotenv()
-
-def test_delete_nonexistent_endpoint():
+@pytest.mark.integration
+def test_delete_model():
     """
-    Test deleting a nonexistent endpoint
+    Integration test for deleting the model that was deployed in create_model test.
+    Uses the same model ID pattern as create test.
     """
-    # Ensure we have the required environment variables
-    required_vars = ['AZURE_SUBSCRIPTION_ID', 'AZURE_RESOURCE_GROUP', 'AZURE_WORKSPACE_NAME']
-    missing_vars = [var for var in required_vars if not os.getenv(var)]
+    load_dotenv()
     
-    if missing_vars:
-        pytest.skip(f"Missing environment variables: {missing_vars}")
-    
-    # Generate a random endpoint name that is unlikely to exist
-    random_endpoint_name = "test-nonexistent-endpoint"
-    
-    # Attempt to delete the nonexistent endpoint
-    result = delete_azure_model(random_endpoint_name)
-    
-    # For a nonexistent endpoint, the function should return False
-    assert result is False, "Deletion of nonexistent endpoint should return False"
+    try:
+        # Get Azure ML client to list endpoints
+        credential = DefaultAzureCredential()
+        ml_client = MLClient(
+            credential=credential,
+            subscription_id=os.getenv('AZURE_SUBSCRIPTION_ID'),
+            resource_group_name=os.getenv('AZURE_RESOURCE_GROUP'),
+            workspace_name=os.getenv('AZURE_WORKSPACE_NAME')
+        )
+        
+        # List endpoints that match our model pattern
+        endpoints = ml_client.online_endpoints.list()
+        endpoint_to_delete = None
+        
+        # Find endpoint created by the create test (starts with hf-ep-)
+        for endpoint in endpoints:
+            if endpoint.name.startswith('hf-ep-'):
+                endpoint_to_delete = endpoint.name
+                break
+        
+        if not endpoint_to_delete:
+            pytest.skip("No endpoint found from create test")
+            
+        print(f"\nFound endpoint to delete: {endpoint_to_delete}")
+        
+        # Test deletion
+        result = delete_azure_model(endpoint_to_delete)
+        
+        # Verify deletion
+        assert result is True, f"Failed to delete endpoint: {endpoint_to_delete}"
+        print(f"✓ Successfully deleted endpoint: {endpoint_to_delete}")
+        
+    except Exception as e:
+        print(f"\nDeletion failed: {str(e)}")
+        print("\nTroubleshooting steps:")
+        print("1. Verify create test has run successfully")
+        print("2. Check endpoint exists in Azure ML workspace")
+        print("3. Verify Azure permissions")
+        raise
