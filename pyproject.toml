@@ -36,7 +36,6 @@ license = {text = "MIT"}
 
 [project.scripts]
 magemaker = "magemaker.runner:runner"
-magemaker-docker = "magemaker.docker.cli:main"
 
 
 [build-system]
