@@ -2,6 +2,7 @@ import argparse
 import logging
 import sys
 import traceback
+from magemaker.version import VERSION
 import yaml
 logging.getLogger("sagemaker.config").setLevel(logging.WARNING)
 logging.getLogger("botocore.credentials").setLevel(logging.WARNING)
@@ -23,11 +24,20 @@ GREEN='\033[0;32m'
 def runner():
     # if (not os.path.exists(os.path.expanduser('~/.aws')) or not os.path.exists('.env')):
     #     os.system("bash setup.sh")
+    print(f"magemaker {VERSION}")
 
     parser = argparse.ArgumentParser(
         description="Create, deploy, query against models.",
         epilog="As an alternative to the commandline, params can be placed in a file, one per line, and specified on the commandline like '%(prog)s @params.conf'.",
         fromfile_prefix_chars='@')
+        
+    parser.add_argument(
+        '--version',
+        action='version',
+        version=f'magemaker {VERSION}',
+        help="Show magemaker version and exit"
+    )
+
     parser.add_argument(
         "--hf",
         help="Deploy a Hugging Face Model.",
@@ -142,6 +152,14 @@ if __name__ == '__main__':
         description="Create, deploy, query against models.",
         epilog="As an alternative to the commandline, params can be placed in a file, one per line, and specified on the commandline like '%(prog)s @params.conf'.",
         fromfile_prefix_chars='@')
+    
+    parser.add_argument(
+        '--version',
+        action='version',
+        version=f'magemaker {VERSION}',
+        help="Show magemaker version and exit"
+    )
+
     parser.add_argument(
         "--hf",
         help="Deploy a Hugging Face Model.",
