@@ -24,7 +24,8 @@ GREEN='\033[0;32m'
 def runner():
     # if (not os.path.exists(os.path.expanduser('~/.aws')) or not os.path.exists('.env')):
     #     os.system("bash setup.sh")
-    print(f"magemaker {VERSION}")
+    if '--version' not in sys.argv:
+        print(f"{GREEN}magemaker v{VERSION}{NC}")
 
     parser = argparse.ArgumentParser(
         description="Create, deploy, query against models.",
@@ -34,7 +35,7 @@ def runner():
     parser.add_argument(
         '--version',
         action='version',
-        version=f'magemaker {VERSION}',
+        version=f"{GREEN}magemaker v{VERSION}{NC}",
         help="Show magemaker version and exit"
     )
 
@@ -156,7 +157,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--version',
         action='version',
-        version=f'magemaker {VERSION}',
+        version=f"{GREEN}magemaker v{VERSION}{NC}",
         help="Show magemaker version and exit"
     )
 
