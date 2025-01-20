@@ -104,6 +104,7 @@ def deploy_huggingface_model_to_vertexai(deployment, model):
 
 def deploy_custom_huggingface_model(deployment: Deployment, model: Model):
     SAGEMAKER_ROLE = dotenv_values(".env").get("SAGEMAKER_ROLE")
+
     region_name = session.region_name
     if model.location is None:
         print_error("Missing model source location.")

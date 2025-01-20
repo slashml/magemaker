@@ -1,6 +1,8 @@
 from unittest.mock import patch, MagicMock
 from magemaker.gcp.delete_model import delete_vertex_ai_model
+import pytest
 
+@pytest.mark.unit
 @patch('google.cloud.aiplatform.Model')
 @patch('google.cloud.aiplatform.Endpoint')
 @patch('google.cloud.aiplatform.init')

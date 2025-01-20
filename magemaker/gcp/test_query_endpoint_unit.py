@@ -17,6 +17,7 @@ def mock_credentials():
     mock_creds.token = 'test-token'
     return mock_creds
 
+@pytest.mark.unit
 def test_query_endpoint_success(mock_env_vars, mock_credentials):
     """Test successful endpoint query."""
     with patch('magemaker.gcp.query_endpoint.dotenv_values') as mock_dotenv, \
@@ -57,6 +58,7 @@ def test_query_endpoint_success(mock_env_vars, mock_credentials):
         assert 'instances' in kwargs['json']
         assert kwargs['json']['instances'][0]['inputs'] == 'test input'
 
+@pytest.mark.unit
 def test_query_endpoint_with_token_path(mock_env_vars, mock_credentials):
     """Test query with token path."""
     with patch('magemaker.gcp.query_endpoint.dotenv_values') as mock_dotenv, \

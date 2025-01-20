@@ -25,3 +25,12 @@ def test_query_nonexistent_endpoint():
     # Expect an exception when querying a nonexistent endpoint
     with pytest.raises(Exception):
         query_azure_endpoint(nonexistent_endpoint_name, sample_query)
+
+
+
+# def test_query_endpoint_rest():
+
+#     endpoint_id = '1234567890'
+#     input_text = 'This is a test'
+
+#     resp = query_azure_endpoint(endpoint_id=endpoint_id, input_text=input_text)

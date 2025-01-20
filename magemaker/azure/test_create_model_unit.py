@@ -29,6 +29,7 @@ def sample_deployment():
         instance_count=1
     )
 
+@pytest.mark.unit
 def test_deploy_model_to_azure(mock_env_vars, sample_model, sample_deployment):
     """Test the model deployment function."""
     with patch('magemaker.azure.create_model.dotenv_values') as mock_dotenv, \

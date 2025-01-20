@@ -18,7 +18,7 @@ def sample_config():
     )
     return model, deployment
 
-@pytest.mark.integration
+@pytest.mark.unit
 def test_successful_deployment(sample_config):
     """Test successful model deployment."""
     model, deployment = sample_config
@@ -40,7 +40,7 @@ def test_successful_deployment(sample_config):
             assert result == mock_endpoint
             mock_deploy.assert_called_once()
 
-@pytest.mark.integration
+@pytest.mark.unit
 def test_failed_deployment(sample_config):
     """Test handling of deployment failure."""
     model, deployment = sample_config

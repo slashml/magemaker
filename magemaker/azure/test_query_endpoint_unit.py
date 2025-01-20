@@ -11,6 +11,7 @@ def mock_env_vars():
         "AZURE_WORKSPACE_NAME": "test-workspace"
     }
 
+@pytest.mark.unit
 def test_query_endpoint_success(mock_env_vars):
     with patch('magemaker.azure.query_endpoint.dotenv_values') as mock_dotenv, \
          patch('magemaker.azure.query_endpoint.DefaultAzureCredential') as mock_cred, \
