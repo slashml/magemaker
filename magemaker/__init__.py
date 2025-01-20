@@ -31,7 +31,9 @@ def pre_flight():
     # Rest of your main function code
     return 0
 
-pre_flight()
+import sys
+if not any(arg in ['--version', '-V'] for arg in sys.argv[1:]):
+    pre_flight()
 # print('sometihng', os.getpwd())
 # if (not os.path.exists(os.path.expanduser('~/.aws')) or not os.path.exists('.env')):
 #     os.system("bash setup.sh")
