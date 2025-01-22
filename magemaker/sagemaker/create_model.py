@@ -1,5 +1,4 @@
 import json
-import os
 from dotenv import dotenv_values
 from rich.table import Table
 from sagemaker import image_uris, model_uris, script_uris
@@ -21,9 +20,7 @@ from magemaker.utils.model_utils import get_unique_endpoint_name, get_model_and_
 from magemaker.huggingface import HuggingFaceTask
 from magemaker.huggingface.hf_hub_api import get_hf_task
 
-NC='\033[0m' # No Color
-YELLOW='\033[1;33m'
-GREEN='\033[0;32m'
+
 
 def deploy_huggingface_model_to_sagemaker(deployment, model):
     HUGGING_FACE_HUB_TOKEN = dotenv_values(".env").get("HUGGING_FACE_HUB_KEY")
@@ -96,10 +93,6 @@ def deploy_huggingface_model_to_sagemaker(deployment, model):
 
     print_success(
         f"{model.id} is now up and running at the endpoint [blue]{predictor.endpoint_name}")
-    
-    config_path = os.path.join(os.getcwd(), 'configs', f"{predictor.endpoint_name}.yml")
-    print(f"\n{YELLOW}Important:{NC} Configuration saved at: {GREEN}{config_path}{NC}")
-    print(f"You'll need this path for querying the model later.")
 
     write_config(deployment, model)
     return predictor

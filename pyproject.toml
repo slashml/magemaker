@@ -45,7 +45,7 @@ distribution = true
 package-dir = "magemaker"
 
 [tool.pdm.build]
-includes = ["magemaker", "magemaker/scripts/preflight.sh", "magemaker/scripts/setup_role.sh", "magemaker/docker/Dockerfile", "magemaker/docker/entrypoint.sh"]  # Include setup.sh in the package distribution
+includes = ["magemaker", "magemaker/scripts/preflight.sh", "magemaker/scripts/setup_role.sh"]  # Include setup.sh in the package distribution
 
 
 [tool.pdm.dev-dependencies]
