@@ -204,5 +204,4 @@ cython_debug/
 models/
 configs/
 .pdm-python
-.magemaker_configs
 .env.save
