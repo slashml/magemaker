@@ -25,8 +25,17 @@ log_error() {
 # Configuration functions
 configure_aws() {
 echo "Configuring AWS..."
+    if [ -f ".env" ] && grep -q "AWS_ACCESS_KEY_ID" ".env" && grep -q "AWS_SECRET_ACCESS_KEY" ".env"; then
+        echo -e "${GREEN}Using AWS credentials from .env file${NC}"
+        export $(grep "AWS_" .env | xargs)
+        
+        aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+        aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+        aws configure set default.region ${AWS_DEFAULT_REGION:-us-east-1}
+        return 0
+    fi
 echo "you need to create an aws user with access to Sagemaker"
-echo "if you don't know how to do that follow this doc https://docs.google.com/document/d/1NvA6uZmppsYzaOdkcgNTRl7Nb4LbpP9Koc4H_t5xNSg/edit?usp=sharing"
+echo "if you don't know how to do that follow this guide https://magemaker.slashml.com/configuration/AWS"
 
 
 # green
@@ -53,7 +62,20 @@ fi
 # echo green that press enter if you have already done this
 echo -e "${GREEN}Press enter in the following configuration steps if you have already done this${NC}"
 
-aws configure set region us-east-1 && aws configure
+    read -p "AWS Access Key ID: " aws_access_key_id
+    read -p "AWS Secret Access Key: " aws_secret_access_key
+    read -p "Default region name [us-east-1]: " aws_region
+    aws_region=${aws_region:-us-east-1}
+
+    echo "AWS_ACCESS_KEY_ID=$aws_access_key_id" >> .env
+    echo "AWS_SECRET_ACCESS_KEY=$aws_secret_access_key" >> .env
+    echo "AWS_DEFAULT_REGION=$aws_region" >> .env
+    echo -e "${GREEN}AWS credentials saved to .env file${NC}"
+
+    aws configure set aws_access_key_id $aws_access_key_id
+    aws configure set aws_secret_access_key $aws_secret_access_key
+    aws configure set default.region $aws_region
+
 touch .env
 
 
@@ -70,7 +92,7 @@ fi
 configure_gcp() {
     echo "Configuring GCP..."
 echo "you need to create a GCP service account with access to GCS and vertex ai"
-echo "if you don't know how to do that follow this doc https://docs.google.com/document/d/1NvA6uZmppsYzaOdkcgNTRl7Nb4LbpP9Koc4H_t5xNSg/edit?usp=sharing"
+echo "if you don't know how to do that follow this doc https://magemaker.slashml.com/configuration/GCP"
 
 if ! command -v gcloud &> /dev/null
 then
@@ -153,6 +175,8 @@ fi
 # AZURE
 configure_azure() {
 echo "Configuring Azure..."
+echo "you need to create a Azure service account"
+echo "if you don't know how to do that follow this doc https://magemaker.slashml.com/configuration/Azure"
 echo "Checking for Azure CLI installation..."
 if ! command -v az &> /dev/null
 then

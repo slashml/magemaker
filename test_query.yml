@@ -1,0 +1,17 @@
+deployment:
+  destination: aws
+  endpoint_name: google-bert--bert-base-uncased-202501212047
+  instance_count: 1
+  instance_type: ml.m5.large
+  num_gpus: null
+  quantization: null
+
+models:
+  - id: google-bert/bert-base-uncased
+    location: null
+    predict: null
+    source: huggingface
+    task: fill-mask
+    version: null
+
+query: What is the [MASK] weather today?
