@@ -41,7 +41,10 @@ import os
 # set AWS_REGION in env
 os.environ["AWS_REGION"] = "us-west-2"
 
-
+NC='\033[0m'
+YELLOW='\033[1;33m'
+GREEN='\033[0;32m'
+RED='\033[0;31m'
 
 
 def deploy_huggingface_model(deployment: Deployment, model: Model):
@@ -129,9 +132,15 @@ def query_endpoint(endpoint, query):
         if config:
             config = (config.deployment, config.models[0])
             make_query_request(name, query, config)
-        
-        print('Config for this model not found, try another model')
+            return
 
+        else:
+            expected_path = os.path.join(os.getcwd(), 'configs', f"{name}.yml")
+            print(f"[red]Config for this model not found![/red]")
+            print(f"Expected config location: [green]{expected_path}[/green]")
+            print(f"[yellow]Please ensure config file exists before querying.[/yellow]")
+            return
+        
     if provider == 'VertexAI':
         endpoint_id = resource_name.split('/')[-1] 
         query_vertexai_endpoint_rest(endpoint_id, query.query)
