@@ -97,6 +97,10 @@ def runner():
     preflight_path = os.path.join(script_dir, 'scripts', 'preflight.sh')
     cmd = ["bash", preflight_path]
 
+    if args.query and (args.deploy or args.cloud or args.train):
+        print(f"{RED}Error: --query flag cannot be used with other commands{NC}")
+        sys.exit(1)
+        
     if args.cloud:
         if args.deploy is not None:
             print(f"{RED}Error: You cannot specify a deployment configuration file with the --cloud flag. We will pick the destination from the yaml file{NC}")
@@ -163,7 +167,7 @@ def runner():
                 query_text = configuration.get('query')
 
                 if not all([deployment, model, query_text]):
-                    print(f"[red]Error: Invalid query configuration. Required fields missing.[/red]")
+                    print(f"{RED}Error: Invalid query configuration. Required fields missing.{NC}")
                     sys.exit(1)
 
                 endpoint = (
