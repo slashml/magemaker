@@ -23,7 +23,7 @@ jobs:
         with:
           repository: slashml/magemaker_docs
           path: docs-repo
-          token: ${{ secrets.DOC_REPO_TOKEN }}
+          token: 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
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -32,7 +32,7 @@ jobs:
 
       - name: Update Documentation
         env:
-          GITHUB_TOKEN: ${{ secrets.DOC_REPO_TOKEN }}
+          GITHUB_TOKEN: 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
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           # Get the current PR title and description
