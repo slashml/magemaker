@@ -1,0 +1,67 @@
+# File: .github/workflows/docs-automation.yml
+name: Documentation Automation
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches:
+      - main
+      - master
+
+jobs:
+  update-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main repository
+        uses: actions/checkout@v4
+        with:
+          repository: slashml/magemaker
+          path: main-repo
+
+      - name: Checkout docs repository
+        uses: actions/checkout@v4
+        with:
+          repository: slashml/magemaker_docs
+          path: docs-repo
+          token: ${{ secrets.DOC_REPO_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Update Documentation
+        env:
+          GITHUB_TOKEN: ${{ secrets.DOC_REPO_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          # Get the current PR title and description
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          PR_BODY="${{ github.event.pull_request.body }}"
+          
+          # Create a new branch in docs repo
+          cd docs-repo
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          
+          # Create new branch for docs update
+          BRANCH_NAME="docs/pr-${PR_NUMBER}"
+          git checkout -b $BRANCH_NAME
+          
+          # Update changelog (you'll need to implement this script)
+          python ../main-repo/scripts/update_docs.py \
+            --pr-title "$PR_TITLE" \
+            --pr-body "$PR_BODY" \
+            --docs-dir "."
+          
+          # Commit and push changes
+          git add .
+          git commit -m "docs: Update documentation for PR #${PR_NUMBER}"
+          git push origin $BRANCH_NAME
+          
+          # Create PR in docs repository
+          gh pr create \
+            --title "📚 Docs: Update for PR #${PR_NUMBER}" \
+            --body "Documentation updates for [PR #${PR_NUMBER}](https://github.com/slashml/magemaker/pull/${PR_NUMBER})" \
+            --base main \
+            --head $BRANCH_NAME

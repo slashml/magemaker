@@ -18,14 +18,14 @@ def setup():
     aiplatform.init(project=PROJECT_ID, location=GCLOUD_REGION)
 
 @pytest.mark.integration
-def test_create_and_deploy_minimal_model():
+def test_create_and_deploy_gcp_model():
     """
     Test actual model creation and deployment with minimal configuration.
     Tests the core functionality of deploy_huggingface_model_to_vertexai.
     """
     # Test configurations
     model = Model(
-        id="bert-base-uncased",  # Using a small model
+        id="Qwen/CodeQwen1.5-7B-Chat",  # Using a small model
         source=ModelSource.HuggingFace
     )
     
