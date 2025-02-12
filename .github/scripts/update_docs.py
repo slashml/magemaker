@@ -8,6 +8,7 @@ def update_changelog(pr_title, pr_body, docs_dir):
     Update the changelog with new PR information
     """
 
+    print('console')
     changelog_path = os.path.join(docs_dir, 'changelog.md')
     
     # Create changelog entry
