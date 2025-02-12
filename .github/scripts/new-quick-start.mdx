@@ -1,0 +1,251 @@
+---
+title: Quick Start
+"og:title": "Magemaker"
+---
+
+<Note> Make sure you have followed the [installation](installation) steps before proceeding. </Note>
+
+
+## Interactive View
+
+1. Run Magemaker with your desired cloud provider:
+
+```sh
+magemaker --cloud [aws|gcp|azure|all]
+```
+
+Supported providers:
+
+- `--cloud aws` AWS SageMaker deployment
+- `--cloud gcp` Google Cloud Vertex AI deployment
+- `--cloud azure` Azure Machine Learning deployment
+- `--cloud all` Configure all three providers at the same time
+
+
+### List Models
+
+From the dropdown, select `Show Acitve Models` to see the list of endpoints deployed.
+
+![Acitve Endpoints](../Images/active-1.png)
+
+### Delete Models
+
+From the dropdown, select `Delete a Model Endpoint` to see the list of models endpoints. Press space to select the endpoints you want to delete
+
+![Delete Endpoints](../Images/delete-1.png)
+
+
+### Querying Models
+
+From the dropdown, select `Query a Model Endpoint` to see the list of models endpoints. Press space to select the endpoints you want to query. Enter the query in the text box and press enter to get the response.
+
+![Query Endpoints](../Images/query-1.png)
+
+
+### YAML-based Deployment (Recommended)
+
+For reproducible deployments, use YAML configuration:
+
+```sh
+magemaker --deploy .magemaker_config/your-model.yaml
+```
+
+Example YAML for AWS deployment:
+
+```yaml
+deployment: !Deployment
+  destination: aws 
+  endpoint_name: facebook-opt-test
+  instance_count: 1
+  instance_type: ml.m5.xlarge
+  num_gpus: null
+  quantization: null
+models:
+  - !Model
+    id: facebook/opt-125m
+    location: null
+    predict: null
+    source: huggingface
+    task: text-generation
+    version: null
+```
+
+For GCP Vertex AI:
+
+```yaml
+deployment: !Deployment
+  destination: gcp
+  endpoint_name: facebook-opt-test
+  accelerator_count: 1
+  instance_type: g2-standard-12
+  accelerator_type: NVIDIA_L4
+  num_gpus: null
+  quantization: null
+
+models:
+  - !Model
+    id: facebook/opt-125m
+    location: null
+    predict: null
+    source: huggingface
+    task: null
+    version: null
+```
+
+For Azure ML:
+
+```yaml
+deployment: !Deployment
+  destination: azure
+  endpoint_name: facebook-opt-test
+  instance_count: 1
+  instance_type: Standard_DS3_v2
+models:
+  - !Model
+    id: facebook--opt-125m
+    location: null
+    predict: null
+    source: huggingface
+    task: text-generation
+    version: null
+```
+<Note>
+  The model ids for Azure are different from AWS and GCP. Make sure to use the one provided by Azure in the Azure Model Catalog. 
+
+  To find the relevant model id, follow the following steps
+  <Steps>
+    <Step title="Go to your workspace studio">
+      Find the workpsace in the Azure portal and click on the studio url provided. Click on the `Model Catalog` on the left side bar
+    	![Azure ML Creation](../Images/workspace-studio.png)
+    </Step>
+
+      <Step title="Select Hugging Face in the Collections List">
+      Select Hugging-Face from the collections list. The id of the model card is the id you need to use in the yaml file
+    	![Azure ML Creation](../Images/hugging-face.png)
+    </Step>
+
+  </Steps>
+</Note>
+
+
+### YAML-Based Querying (Recommended)
+
+MageMaker supports querying deployed models using YAML configuration files. This provides a convenient way to send inference requests to your endpoints.
+
+#### Command Structure
+```bash
+magemaker --query .magemaker_config/your-model.yaml
+```
+
+#### Example Configuration
+```yaml
+deployment: !Deployment
+  destination: aws 
+  endpoint_name: facebook-opt-test
+  instance_count: 1
+  instance_type: ml.m5.xlarge
+  num_gpus: null
+  quantization: null
+models:
+  - !Model
+    id: facebook/opt-125m
+    location: null
+    predict: null
+    source: huggingface
+    task: text-generation
+    version: null
+query: !Query
+  input: 'whats the meaning of life'
+```
+
+#### Example Response
+```json
+{
+  "generated_text": "The meaning of life is a philosophical and subjective question that has been pondered throughout human history. While there is no single universal answer, many find meaning through personal growth, relationships, contributing to society, and pursuing their passions.",
+  "model": "facebook/opt-125m",
+  "total_tokens": 42,
+  "generation_time": 0.8
+}
+```
+
+The response includes:
+- The generated text from the model
+- The model ID used for inference
+- Total tokens processed
+- Generation time in seconds
+
+#### Key Components
+
+1. **Deployment Configuration**: Specifies AWS deployment details including:
+   - Destination (aws)
+   - Endpoint name
+   - Instance type and count
+   - GPU configuration
+   - Optional quantization settings
+
+2. **Model Configuration**: Defines the model to be used:
+   - Model ID from Hugging Face
+   - Task type (text-generation)
+   - Source (huggingface)
+   - Optional version and location settings
+
+3. **Query Configuration**: Contains the input text for inference
+
+You can save commonly used configurations in YAML files and reference them using the `--query` flag for streamlined inference requests.
+
+
+### Model Fine-tuning
+
+Fine-tune models using the `train` command:
+
+```sh
+magemaker --train .magemaker_config/train-config.yaml
+```
+
+Example training configuration:
+
+```yaml
+training: !Training
+  destination: aws # or gcp, azure
+  instance_type: ml.p3.2xlarge # varies by cloud provider
+  instance_count: 1
+  training_input_path: s3://your-bucket/data.csv
+  hyperparameters: !Hyperparameters
+    epochs: 3
+    per_device_train_batch_size: 32
+    learning_rate: 2e-5
+```
+{/* 
+### Recommended Models
+
+<CardGroup>
+  <Card
+    title="google-bert/bert-base-uncased"
+    href="https://huggingface.co/google-bert/bert-base-uncased"
+  >
+    Fill Mask: tries to complete your sentence like Madlibs. Query format: text
+    string with [MASK] somewhere in it.
+  </Card>
+
+  <Card
+    title="sentence-transformers/all-MiniLM-L6-v2"
+    href="https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2"
+  >
+    Feature extraction: turns text into a 384d vector embedding for semantic
+    search / clustering. Query format: "type out a sentence like this one."
+  </Card>
+</CardGroup> */}
+
+<Warning>
+  Remember to deactivate unused endpoints to avoid unnecessary charges!
+</Warning>
+
+
+## Contact
+
+You can reach us, faizan & jneid, at [support@slashml.com](mailto:support@slashml.com).
+
+
+If anything doesn't make sense or you have suggestions, do point them out at [magemaker.featurebase.app](https://magemaker.featurebase.app/).
+
+We'd love to hear from you! We're excited to learn how we can make this more valuable for the community and welcome any and all feedback and suggestions.
