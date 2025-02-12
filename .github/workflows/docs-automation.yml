@@ -19,9 +19,11 @@ jobs:
           path: main-repo
 
       - name: Clone docs repository
+        env:
+          TOKEN: ${{ secrets.PAT }}
         run: |
           echo "Cloning docs repository..."
-          git clone --branch main https://${{ secrets.PAT }}@github.com/slashml/magemaker_docs.git docs-repo
+          git clone "https://x-access-token:${TOKEN}@github.com/slashml/magemaker_docs.git" docs-repo
           cd docs-repo
           git config --local user.name 'github-actions[bot]'
           git config --local user.email 'github-actions[bot]@users.noreply.github.com'
