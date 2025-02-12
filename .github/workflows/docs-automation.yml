@@ -60,7 +60,7 @@ jobs:
           git checkout -b $BRANCH_NAME
 
           cd ../main-repo
-          python scripts/update_docs.py \
+          python .github/scripts/update_docs.py \
             --pr-title "$PR_TITLE" \
             --pr-body "$PR_BODY" \
             --docs-dir "../docs-repo"
