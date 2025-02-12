@@ -1,32 +1,24 @@
 # File: scripts/update_docs.py
 import argparse
 import os
+import shutil
 from datetime import datetime
 
-def update_changelog(pr_title, pr_body, docs_dir):
+def update_quickstart(docs_dir):
     """
-    Update the changelog with new PR information
+    Update the quick-start.mdx file with content from new-quick-start.mdx
     """
-
-    print('console')
-    changelog_path = os.path.join(docs_dir, 'changelog.md')
+    # Define paths
+    source_quickstart = os.path.join('scripts', 'new-quick-start.mdx')
+    target_quickstart = os.path.join(docs_dir, 'quick-start.mdx')
     
-    # Create changelog entry
-    today = datetime.now().strftime('%Y-%m-%d')
-    entry = f"\n## {today}\n\n### Pull Request #{os.getenv('PR_NUMBER')}\n\n"
-    entry += f"- {pr_title}\n"
+    # Ensure the source file exists
+    if not os.path.exists(source_quickstart):
+        raise FileNotFoundError(f"Source file {source_quickstart} not found")
     
-    # If changelog doesn't exist, create it
-    if not os.path.exists(changelog_path):
-        os.makedirs(os.path.dirname(changelog_path), exist_ok=True)
-        with open(changelog_path, 'w') as f:
-            f.write("# Changelog\n")
-    
-    # Prepend new entry to changelog
-    with open(changelog_path, 'r+') as f:
-        content = f.read()
-        f.seek(0)
-        f.write(entry + content)
+    # Copy the new quick start guide
+    shutil.copy2(source_quickstart, target_quickstart)
+    print(f"Updated {target_quickstart} with new content")
 
 def main():
     parser = argparse.ArgumentParser(description='Update documentation based on PR')
@@ -35,7 +27,13 @@ def main():
     parser.add_argument('--docs-dir', required=True, help='Documentation directory')
     
     args = parser.parse_args()
-    update_changelog(args.pr_title, args.pr_body, args.docs_dir)
+    
+    try:
+        update_quickstart(args.docs_dir)
+        print("Documentation update completed successfully")
+    except Exception as e:
+        print(f"Error updating documentation: {str(e)}")
+        exit(1)
 
 if __name__ == '__main__':
     main()
