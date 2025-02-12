@@ -9,7 +9,7 @@ def update_quickstart(docs_dir):
     Update the quick-start.mdx file with content from new-quick-start.mdx
     """
     # Define paths
-    source_quickstart = os.path.join('scripts', 'new-quick-start.mdx')
+    source_quickstart = os.path.join('.github', 'scripts', 'new-quick-start.mdx')
     target_quickstart = os.path.join(docs_dir, 'quick-start.mdx')
     
     # Ensure the source file exists
