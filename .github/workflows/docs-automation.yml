@@ -1,5 +1,5 @@
 # File: .github/workflows/docs-automation.yml
-name: Documentation Automation
+name: 📚SirDocsALot working its magic
 
 on:
   pull_request:
