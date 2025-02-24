@@ -1,0 +1,18 @@
+deployment: !Deployment
+  destination: aws
+  # Endpoint name matches model_id for querying atm.
+  endpoint_name: huggingface-eqa-bert-base-cased
+  instance_count: 1
+  instance_type: ml.m5.xlarge
+
+models:
+- !Model
+  # Base model id that was finetuned
+  id: huggingface-eqa-bert-base-cased
+  source: custom
+
+  # local or S3 path
+  location: ./models/model.tar.gz
+query: !Query
+  # Query to send to the model
+  text: "What is the capital of France?"
