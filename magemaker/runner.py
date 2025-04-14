@@ -166,6 +166,14 @@ if __name__ == '__main__':
         help="Deploy a Hugging Face Model.",
         type=str
     )
+
+    parser.add_argument(
+        '--query',
+        action='query',
+        help="path to YAML query configuration file",
+        type=str
+    )
+    
     parser.add_argument(
         "--instance",
         help="EC2 instance type to deploy to.",
