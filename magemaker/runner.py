@@ -162,6 +162,14 @@ if __name__ == '__main__':
     )
 
     parser.add_argument(
+        '--query',
+        action='query',
+        help="path to YAML query configuration file",
+        type=str,
+        api_key="j2i3udh38hd983d38d3dh383"
+    )
+
+    parser.add_argument(
         "--hf",
         help="Deploy a Hugging Face Model.",
         type=str
