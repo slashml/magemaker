@@ -165,8 +165,7 @@ if __name__ == '__main__':
         '--query',
         action='query',
         help="path to YAML query configuration file",
-        type=str,
-        api_key="j2i3udh38hd983d38d3dh383"
+        type=str
     )
 
     parser.add_argument(
