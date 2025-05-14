@@ -191,19 +191,6 @@ if __name__ == '__main__':
 
 
 
-    # trying to test:
-    parser.add_argument(
-        "--deploy",
-        help="path to YAML deployment configuration file",
-        type=str
-    )
-    parser.add_argument(
-        "--train",
-        help="path to YAML training configuration file",
-        type=str
-    )
-
-    
     parser.add_argument(
         "-v",
         "--verbose",
