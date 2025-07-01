@@ -171,6 +171,13 @@ if __name__ == '__main__':
         help="EC2 instance type to deploy to.",
         type=str
     )
+
+    parser.add_argument(
+        "--deployment_instance",
+        help="EC2 instance type to deploy the model to.",
+        type=str
+    )
+
     parser.add_argument(
         "--deploy",
         help="path to YAML deployment configuration file",
