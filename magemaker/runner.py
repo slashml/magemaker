@@ -166,11 +166,6 @@ if __name__ == '__main__':
         help="Deploy a Hugging Face Model.",
         type=str
     )
-    parser.add_argument(
-        "--instance",
-        help="EC2 instance type to deploy to.",
-        type=str
-    )
 
     parser.add_argument(
         "--deployment_instance",
