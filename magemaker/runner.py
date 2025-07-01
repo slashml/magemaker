@@ -166,11 +166,14 @@ if __name__ == '__main__':
         help="Deploy a Hugging Face Model.",
         type=str
     )
+
     parser.add_argument(
-        "--instance",
-        help="EC2 instance type to deploy to.",
+        "--deployment_instance",
+        help="EC2 instance type to deploy the model to.",
         type=str
     )
+    
+
     parser.add_argument(
         "--deploy",
         help="path to YAML deployment configuration file",
