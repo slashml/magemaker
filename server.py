@@ -29,6 +29,7 @@ def query_endpoint(endpoint_name: str, query: Query):
         query.context = ''
 
     # Support multi-model endpoints
+    # another comment
     config = (config.deployment, config.models[0])
     return make_query_request(endpoint_name, query, config)
 
