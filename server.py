@@ -1,5 +1,6 @@
 import uvicorn
 import os
+
 from dotenv import dotenv_values
 from fastapi import FastAPI
 from magemaker.config import get_config_for_endpoint, get_endpoints_for_model
