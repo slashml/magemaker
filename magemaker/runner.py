@@ -166,6 +166,13 @@ if __name__ == '__main__':
         help="Deploy a Hugging Face Model.",
         type=str
     )
+
+    parser.add_argument(
+        "--vertex",
+        help="Deploy a Google Cloud Platform Model on vertex AI.",
+        type=str
+    )
+
     parser.add_argument(
         "--instance",
         help="EC2 instance type to deploy to.",
