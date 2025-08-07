@@ -6,3 +6,4 @@ venv/touchfile: requirements.txt
 	touch venv/touchfile
 clean:
 	rm -rf venv
+	
