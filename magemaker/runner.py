@@ -44,11 +44,19 @@ def runner():
         help="Deploy a Hugging Face Model.",
         type=str
     )
+
     parser.add_argument(
         "--instance",
         help="EC2 instance type to deploy to.",
         type=str
     )
+
+    parser.add_argument(
+        "--cpu",
+        help="specify cpu type",
+        type=str
+    )
+
     parser.add_argument(
         "--deploy",
         help="path to YAML deployment configuration file",
