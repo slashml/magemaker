@@ -2,6 +2,7 @@ import argparse
 import logging
 import sys
 import traceback
+from magemaker.schemas.query import Query
 from magemaker.version import VERSION
 import yaml
 logging.getLogger("sagemaker.config").setLevel(logging.WARNING)
@@ -12,7 +13,7 @@ from magemaker.sagemaker.fine_tune_model import fine_tune_model
 from magemaker.schemas.deployment import Deployment
 from magemaker.schemas.model import Model, ModelSource
 import subprocess
-from magemaker.main import main, deploy_model
+from magemaker.main import main, deploy_model, query_endpoint
 
 RED='\033[0;31m'  #red
 NC='\033[0m' # No Color
@@ -26,6 +27,10 @@ def runner():
     #     os.system("bash setup.sh")
     if '--version' not in sys.argv:
         print(f"{GREEN}magemaker v{VERSION}{NC}")
+    
+    if os.path.exists('.env'):
+        from dotenv import load_dotenv
+        load_dotenv()
 
     parser = argparse.ArgumentParser(
         description="Create, deploy, query against models.",
@@ -69,6 +74,11 @@ def runner():
         "--cloud", 
         choices=['aws', 'gcp', 'azure', 'all'], 
         help="Specify the cloud provider for configuration and deployment"
+    )
+    parser.add_argument(
+        "--query",
+        help="path to YAML query configuration file",
+        type=str
     )
     if len(sys.argv) == 1:
         # just for the case of magemaker
@@ -142,6 +152,38 @@ def runner():
 
         quit()
 
+    if args.query is not None:
+        try:
+            with open(args.query) as config:
+                configuration = yaml.safe_load(config)
+                
+                # Extract deployment and model info
+                deployment = configuration.get('deployment')
+                model = configuration.get('models')[0]
+                query_text = configuration.get('query')
+
+                if not all([deployment, model, query_text]):
+                    print(f"[red]Error: Invalid query configuration. Required fields missing.[/red]")
+                    sys.exit(1)
+
+                endpoint = (
+                    deployment['endpoint_name'],  # name
+                    'Sagemaker' if deployment['destination'] == 'aws' else deployment['destination'],  # provider
+                    ''  # resource_name
+                )
+
+               
+                query = Query(query=query_text)
+
+               
+                query_endpoint(endpoint, query)
+                sys.exit(0)
+
+        except Exception as e:
+            print(f"[red]Error reading query configuration: {str(e)}[/red]")
+            sys.exit(1)
+
+
     main(args, loglevel)
 
 if __name__ == '__main__':
@@ -204,6 +246,11 @@ if __name__ == '__main__':
         "--cloud", 
         choices=['aws', 'gcp', 'azure'], 
         help="Specify the cloud provider for configuration and deployment"
+    )
+    parser.add_argument(
+    "--query",
+    help="path to YAML query configuration file",
+    type=str
     )
     args = parser.parse_args()
 
