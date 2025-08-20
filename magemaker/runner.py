@@ -202,9 +202,10 @@ if __name__ == '__main__':
     
     parser.add_argument(
         "--cloud", 
-        choices=['aws', 'gcp', 'azure'], 
+        choices=['aws', 'gcp', 'azure', 'ibm'], 
         help="Specify the cloud provider for configuration and deployment"
     )
+
     args = parser.parse_args()
 
     cmd = ["bash", "scripts/preflight.sh"]
