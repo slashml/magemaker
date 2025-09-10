@@ -202,7 +202,7 @@ if __name__ == '__main__':
     
     parser.add_argument(
         "--cloud", 
-        choices=['aws', 'gcp', 'azure', 'IBM', 'cisco', 'hetzner', 'ovs', 'digital-ocean'], 
+        choices=['aws', 'gcp', 'azure', 'IBM', 'cisco', 'hetzner', 'ovs', 'digital-ocean', 'modal-labs'], 
         help="Specify the cloud provider for configuration and deployment"
     )
 
